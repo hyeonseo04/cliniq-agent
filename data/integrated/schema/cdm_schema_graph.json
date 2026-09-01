@@ -1,0 +1,984 @@
+{
+  "cdm_version": "5.3",
+  "source": "OHDSI CommonDataModel OMOP_CDMv5.3_Field_Level.csv",
+  "edges": [
+    {
+      "from_table": "person",
+      "from_column": "gender_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "person",
+      "from_column": "race_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "person",
+      "from_column": "ethnicity_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "person",
+      "from_column": "location_id",
+      "to_table": "location",
+      "to_column": "location_id"
+    },
+    {
+      "from_table": "person",
+      "from_column": "provider_id",
+      "to_table": "provider",
+      "to_column": "provider_id"
+    },
+    {
+      "from_table": "person",
+      "from_column": "care_site_id",
+      "to_table": "care_site",
+      "to_column": "care_site_id"
+    },
+    {
+      "from_table": "person",
+      "from_column": "gender_source_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "person",
+      "from_column": "race_source_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "person",
+      "from_column": "ethnicity_source_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "observation_period",
+      "from_column": "person_id",
+      "to_table": "person",
+      "to_column": "person_id"
+    },
+    {
+      "from_table": "observation_period",
+      "from_column": "period_type_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "visit_occurrence",
+      "from_column": "person_id",
+      "to_table": "person",
+      "to_column": "person_id"
+    },
+    {
+      "from_table": "visit_occurrence",
+      "from_column": "visit_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "visit_occurrence",
+      "from_column": "visit_type_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "visit_occurrence",
+      "from_column": "provider_id",
+      "to_table": "provider",
+      "to_column": "provider_id"
+    },
+    {
+      "from_table": "visit_occurrence",
+      "from_column": "care_site_id",
+      "to_table": "care_site",
+      "to_column": "care_site_id"
+    },
+    {
+      "from_table": "visit_occurrence",
+      "from_column": "visit_source_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "visit_occurrence",
+      "from_column": "admitting_source_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "visit_occurrence",
+      "from_column": "discharge_to_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "visit_occurrence",
+      "from_column": "preceding_visit_occurrence_id",
+      "to_table": "visit_occurrence",
+      "to_column": "visit_occurrence_id"
+    },
+    {
+      "from_table": "visit_detail",
+      "from_column": "person_id",
+      "to_table": "person",
+      "to_column": "person_id"
+    },
+    {
+      "from_table": "visit_detail",
+      "from_column": "visit_detail_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "visit_detail",
+      "from_column": "visit_detail_type_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "visit_detail",
+      "from_column": "provider_id",
+      "to_table": "provider",
+      "to_column": "provider_id"
+    },
+    {
+      "from_table": "visit_detail",
+      "from_column": "care_site_id",
+      "to_table": "care_site",
+      "to_column": "care_site_id"
+    },
+    {
+      "from_table": "visit_detail",
+      "from_column": "visit_detail_source_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "visit_detail",
+      "from_column": "admitting_source_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "visit_detail",
+      "from_column": "discharge_to_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "visit_detail",
+      "from_column": "preceding_visit_detail_id",
+      "to_table": "visit_detail",
+      "to_column": "visit_detail_id"
+    },
+    {
+      "from_table": "visit_detail",
+      "from_column": "visit_detail_parent_id",
+      "to_table": "visit_detail",
+      "to_column": "visit_detail_id"
+    },
+    {
+      "from_table": "visit_detail",
+      "from_column": "visit_occurrence_id",
+      "to_table": "visit_occurrence",
+      "to_column": "visit_occurrence_id"
+    },
+    {
+      "from_table": "condition_occurrence",
+      "from_column": "person_id",
+      "to_table": "person",
+      "to_column": "person_id"
+    },
+    {
+      "from_table": "condition_occurrence",
+      "from_column": "condition_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "condition_occurrence",
+      "from_column": "condition_type_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "condition_occurrence",
+      "from_column": "condition_status_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "condition_occurrence",
+      "from_column": "provider_id",
+      "to_table": "provider",
+      "to_column": "provider_id"
+    },
+    {
+      "from_table": "condition_occurrence",
+      "from_column": "visit_occurrence_id",
+      "to_table": "visit_occurrence",
+      "to_column": "visit_occurrence_id"
+    },
+    {
+      "from_table": "condition_occurrence",
+      "from_column": "visit_detail_id",
+      "to_table": "visit_detail",
+      "to_column": "visit_detail_id"
+    },
+    {
+      "from_table": "condition_occurrence",
+      "from_column": "condition_source_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "drug_exposure",
+      "from_column": "person_id",
+      "to_table": "person",
+      "to_column": "person_id"
+    },
+    {
+      "from_table": "drug_exposure",
+      "from_column": "drug_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "drug_exposure",
+      "from_column": "drug_type_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "drug_exposure",
+      "from_column": "days_supply",
+      "to_table": "no",
+      "to_column": "na"
+    },
+    {
+      "from_table": "drug_exposure",
+      "from_column": "route_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "drug_exposure",
+      "from_column": "provider_id",
+      "to_table": "provider",
+      "to_column": "provider_id"
+    },
+    {
+      "from_table": "drug_exposure",
+      "from_column": "visit_occurrence_id",
+      "to_table": "visit_occurrence",
+      "to_column": "visit_occurrence_id"
+    },
+    {
+      "from_table": "drug_exposure",
+      "from_column": "visit_detail_id",
+      "to_table": "visit_detail",
+      "to_column": "visit_detail_id"
+    },
+    {
+      "from_table": "drug_exposure",
+      "from_column": "drug_source_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "procedure_occurrence",
+      "from_column": "person_id",
+      "to_table": "person",
+      "to_column": "person_id"
+    },
+    {
+      "from_table": "procedure_occurrence",
+      "from_column": "procedure_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "procedure_occurrence",
+      "from_column": "procedure_type_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "procedure_occurrence",
+      "from_column": "modifier_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "procedure_occurrence",
+      "from_column": "provider_id",
+      "to_table": "provider",
+      "to_column": "provider_id"
+    },
+    {
+      "from_table": "procedure_occurrence",
+      "from_column": "visit_occurrence_id",
+      "to_table": "visit_occurrence",
+      "to_column": "visit_occurrence_id"
+    },
+    {
+      "from_table": "procedure_occurrence",
+      "from_column": "visit_detail_id",
+      "to_table": "visit_detail",
+      "to_column": "visit_detail_id"
+    },
+    {
+      "from_table": "procedure_occurrence",
+      "from_column": "procedure_source_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "device_exposure",
+      "from_column": "person_id",
+      "to_table": "person",
+      "to_column": "person_id"
+    },
+    {
+      "from_table": "device_exposure",
+      "from_column": "device_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "device_exposure",
+      "from_column": "device_type_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "device_exposure",
+      "from_column": "provider_id",
+      "to_table": "provider",
+      "to_column": "provider_id"
+    },
+    {
+      "from_table": "device_exposure",
+      "from_column": "visit_occurrence_id",
+      "to_table": "visit_occurrence",
+      "to_column": "visit_occurrence_id"
+    },
+    {
+      "from_table": "device_exposure",
+      "from_column": "visit_detail_id",
+      "to_table": "visit_detail",
+      "to_column": "visit_detail_id"
+    },
+    {
+      "from_table": "device_exposure",
+      "from_column": "device_source_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "measurement",
+      "from_column": "person_id",
+      "to_table": "person",
+      "to_column": "person_id"
+    },
+    {
+      "from_table": "measurement",
+      "from_column": "measurement_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "measurement",
+      "from_column": "measurement_type_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "measurement",
+      "from_column": "operator_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "measurement",
+      "from_column": "value_as_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "measurement",
+      "from_column": "unit_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "measurement",
+      "from_column": "provider_id",
+      "to_table": "provider",
+      "to_column": "provider_id"
+    },
+    {
+      "from_table": "measurement",
+      "from_column": "visit_occurrence_id",
+      "to_table": "visit_occurrence",
+      "to_column": "visit_occurrence_id"
+    },
+    {
+      "from_table": "measurement",
+      "from_column": "visit_detail_id",
+      "to_table": "visit_detail",
+      "to_column": "visit_detail_id"
+    },
+    {
+      "from_table": "measurement",
+      "from_column": "measurement_source_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "observation",
+      "from_column": "person_id",
+      "to_table": "person",
+      "to_column": "person_id"
+    },
+    {
+      "from_table": "observation",
+      "from_column": "observation_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "observation",
+      "from_column": "observation_type_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "observation",
+      "from_column": "value_as_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "observation",
+      "from_column": "qualifier_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "observation",
+      "from_column": "unit_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "observation",
+      "from_column": "provider_id",
+      "to_table": "provider",
+      "to_column": "provider_id"
+    },
+    {
+      "from_table": "observation",
+      "from_column": "visit_occurrence_id",
+      "to_table": "visit_occurrence",
+      "to_column": "visit_occurrence_id"
+    },
+    {
+      "from_table": "observation",
+      "from_column": "visit_detail_id",
+      "to_table": "visit_detail",
+      "to_column": "visit_detail_id"
+    },
+    {
+      "from_table": "observation",
+      "from_column": "observation_source_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "death",
+      "from_column": "person_id",
+      "to_table": "person",
+      "to_column": "person_id"
+    },
+    {
+      "from_table": "death",
+      "from_column": "death_type_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "death",
+      "from_column": "cause_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "death",
+      "from_column": "cause_source_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "note",
+      "from_column": "person_id",
+      "to_table": "person",
+      "to_column": "person_id"
+    },
+    {
+      "from_table": "note",
+      "from_column": "note_type_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "note",
+      "from_column": "note_class_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "note",
+      "from_column": "encoding_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "note",
+      "from_column": "language_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "note",
+      "from_column": "provider_id",
+      "to_table": "provider",
+      "to_column": "provider_id"
+    },
+    {
+      "from_table": "note",
+      "from_column": "visit_occurrence_id",
+      "to_table": "visit_occurrence",
+      "to_column": "visit_occurrence_id"
+    },
+    {
+      "from_table": "note",
+      "from_column": "visit_detail_id",
+      "to_table": "visit_detail",
+      "to_column": "visit_detail_id"
+    },
+    {
+      "from_table": "note_nlp",
+      "from_column": "section_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "note_nlp",
+      "from_column": "note_nlp_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "note_nlp",
+      "from_column": "note_nlp_source_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "specimen",
+      "from_column": "person_id",
+      "to_table": "person",
+      "to_column": "person_id"
+    },
+    {
+      "from_table": "specimen",
+      "from_column": "specimen_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "specimen",
+      "from_column": "specimen_type_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "specimen",
+      "from_column": "unit_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "specimen",
+      "from_column": "anatomic_site_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "specimen",
+      "from_column": "disease_status_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "fact_relationship",
+      "from_column": "domain_concept_id_1",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "fact_relationship",
+      "from_column": "domain_concept_id_2",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "fact_relationship",
+      "from_column": "relationship_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "care_site",
+      "from_column": "place_of_service_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "care_site",
+      "from_column": "location_id",
+      "to_table": "location",
+      "to_column": "location_id"
+    },
+    {
+      "from_table": "provider",
+      "from_column": "specialty_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "provider",
+      "from_column": "care_site_id",
+      "to_table": "care_site",
+      "to_column": "care_site_id"
+    },
+    {
+      "from_table": "provider",
+      "from_column": "gender_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "provider",
+      "from_column": "specialty_source_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "provider",
+      "from_column": "gender_source_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "payer_plan_period",
+      "from_column": "person_id",
+      "to_table": "person",
+      "to_column": "person_id"
+    },
+    {
+      "from_table": "payer_plan_period",
+      "from_column": "payer_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "payer_plan_period",
+      "from_column": "payer_source_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "payer_plan_period",
+      "from_column": "plan_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "payer_plan_period",
+      "from_column": "plan_source_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "payer_plan_period",
+      "from_column": "sponsor_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "payer_plan_period",
+      "from_column": "sponsor_source_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "payer_plan_period",
+      "from_column": "stop_reason_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "payer_plan_period",
+      "from_column": "stop_reason_source_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "cost",
+      "from_column": "cost_domain_id",
+      "to_table": "domain",
+      "to_column": "domain_id"
+    },
+    {
+      "from_table": "cost",
+      "from_column": "cost_type_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "cost",
+      "from_column": "currency_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "cost",
+      "from_column": "revenue_code_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "cost",
+      "from_column": "drg_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "drug_era",
+      "from_column": "person_id",
+      "to_table": "person",
+      "to_column": "person_id"
+    },
+    {
+      "from_table": "drug_era",
+      "from_column": "drug_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "dose_era",
+      "from_column": "person_id",
+      "to_table": "person",
+      "to_column": "person_id"
+    },
+    {
+      "from_table": "dose_era",
+      "from_column": "drug_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "dose_era",
+      "from_column": "unit_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "condition_era",
+      "from_column": "person_id",
+      "to_table": "person",
+      "to_column": "person_id"
+    },
+    {
+      "from_table": "condition_era",
+      "from_column": "condition_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "metadata",
+      "from_column": "metadata_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "metadata",
+      "from_column": "metadata_type_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "metadata",
+      "from_column": "value_as_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "concept",
+      "from_column": "domain_id",
+      "to_table": "domain",
+      "to_column": "domain_id"
+    },
+    {
+      "from_table": "concept",
+      "from_column": "vocabulary_id",
+      "to_table": "vocabulary",
+      "to_column": "vocabulary_id"
+    },
+    {
+      "from_table": "concept",
+      "from_column": "concept_class_id",
+      "to_table": "concept_class",
+      "to_column": "concept_class_id"
+    },
+    {
+      "from_table": "vocabulary",
+      "from_column": "vocabulary_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "domain",
+      "from_column": "domain_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "concept_class",
+      "from_column": "concept_class_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "concept_relationship",
+      "from_column": "concept_id_1",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "concept_relationship",
+      "from_column": "concept_id_2",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "concept_relationship",
+      "from_column": "relationship_id",
+      "to_table": "relationship",
+      "to_column": "relationship_id"
+    },
+    {
+      "from_table": "relationship",
+      "from_column": "relationship_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "concept_synonym",
+      "from_column": "concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "concept_synonym",
+      "from_column": "language_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "concept_ancestor",
+      "from_column": "ancestor_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "concept_ancestor",
+      "from_column": "descendant_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "source_to_concept_map",
+      "from_column": "source_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "source_to_concept_map",
+      "from_column": "target_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "source_to_concept_map",
+      "from_column": "target_vocabulary_id",
+      "to_table": "vocabulary",
+      "to_column": "vocabulary_id"
+    },
+    {
+      "from_table": "drug_strength",
+      "from_column": "drug_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "drug_strength",
+      "from_column": "ingredient_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "drug_strength",
+      "from_column": "amount_unit_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "drug_strength",
+      "from_column": "numerator_unit_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "drug_strength",
+      "from_column": "denominator_unit_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "cohort_definition",
+      "from_column": "definition_type_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "cohort_definition",
+      "from_column": "subject_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    },
+    {
+      "from_table": "attribute_definition",
+      "from_column": "attribute_type_concept_id",
+      "to_table": "concept",
+      "to_column": "concept_id"
+    }
+  ]
+}

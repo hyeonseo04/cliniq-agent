@@ -1,0 +1,3112 @@
+{
+  "generated_at": "2026-08-26T19:49:13",
+  "source": "OHDSI DataQualityDashboard OMOP_CDMv5.3 (Oracle 이식)",
+  "count": 200,
+  "verified": true,
+  "queries": {
+    "G001": {
+      "check_id": "isPrimaryKey",
+      "table": "observation",
+      "column": "observation_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.observation_id AS violating_pk\nFROM observation cdmTable\nWHERE cdmTable.observation_id IN (SELECT observation_id FROM observation GROUP BY observation_id HAVING COUNT(*) > 1)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation cdmTable\nWHERE cdmTable.observation_id IN (SELECT observation_id FROM observation GROUP BY observation_id HAVING COUNT(*) > 1)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G002": {
+      "check_id": "plausibleTemporalAfter",
+      "table": "visit_occurrence",
+      "column": "visit_end_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "ST_MF",
+      "gold_params": {
+        "pair_field": "visit_start_date",
+        "ref_table": "visit_occurrence",
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\nWHERE CAST(cdmTable.visit_start_date AS DATE) > CAST(cdmTable.visit_end_date AS DATE)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\nWHERE CAST(cdmTable.visit_start_date AS DATE) > CAST(cdmTable.visit_end_date AS DATE)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G003": {
+      "check_id": "isStandardValidConcept",
+      "table": "measurement",
+      "column": "measurement_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\n    JOIN concept co\n      ON cdmTable.measurement_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\n    JOIN concept co\n      ON cdmTable.measurement_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "note": "",
+      "violation_count": 434
+    },
+    "G004": {
+      "check_id": "plausibleDuringLife",
+      "table": "visit_occurrence",
+      "column": "visit_start_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.visit_start_date IS NOT NULL AND CAST(cdmTable.visit_start_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.visit_start_date IS NOT NULL AND CAST(cdmTable.visit_start_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "note": "DQD 원본에 사망일 +60일 허용 오차가 정의되어 있음",
+      "violation_count": 80
+    },
+    "G005": {
+      "check_id": "isRequired",
+      "table": "procedure_occurrence",
+      "column": "procedure_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.procedure_concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.procedure_concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G006": {
+      "check_id": "isForeignKey",
+      "table": "measurement",
+      "column": "visit_occurrence_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "ref_table": "visit_occurrence",
+        "ref_field": "visit_occurrence_id",
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\n    LEFT JOIN visit_occurrence fk\n      ON cdmTable.visit_occurrence_id = fk.visit_occurrence_id\nWHERE cdmTable.visit_occurrence_id IS NOT NULL AND fk.visit_occurrence_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\n    LEFT JOIN visit_occurrence fk\n      ON cdmTable.visit_occurrence_id = fk.visit_occurrence_id\nWHERE cdmTable.visit_occurrence_id IS NOT NULL AND fk.visit_occurrence_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G007": {
+      "check_id": "sourceValueCompleteness",
+      "table": "visit_occurrence",
+      "column": "visit_source_value",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "varchar(50)"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\nWHERE cdmTable.visit_source_value IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\nWHERE cdmTable.visit_source_value IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G008": {
+      "check_id": "standardConceptRecordCompleteness",
+      "table": "visit_occurrence",
+      "column": "visit_type_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\nWHERE cdmTable.visit_type_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\nWHERE cdmTable.visit_type_concept_id = 0",
+      "note": "",
+      "violation_count": 0
+    },
+    "G009": {
+      "check_id": "measureValueCompleteness",
+      "table": "condition_occurrence",
+      "column": "condition_start_date",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\nWHERE cdmTable.condition_start_date IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\nWHERE cdmTable.condition_start_date IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G010": {
+      "check_id": "standardConceptRecordCompleteness",
+      "table": "condition_occurrence",
+      "column": "condition_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\nWHERE cdmTable.condition_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\nWHERE cdmTable.condition_concept_id = 0",
+      "note": "",
+      "violation_count": 0
+    },
+    "G011": {
+      "check_id": "plausibleBeforeDeath",
+      "table": "procedure_occurrence",
+      "column": "procedure_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.procedure_date IS NOT NULL AND CAST(cdmTable.procedure_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.procedure_date IS NOT NULL AND CAST(cdmTable.procedure_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "note": "DQD 원본에 사망일 +60일 허용 오차가 정의되어 있음",
+      "violation_count": 119
+    },
+    "G012": {
+      "check_id": "plausibleTemporalAfter",
+      "table": "death",
+      "column": "death_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "pair_field": "birth_datetime",
+        "ref_table": "person",
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM death cdmTable\n    JOIN person plausibleTable\n      ON cdmTable.person_id = plausibleTable.person_id\nWHERE COALESCE(CAST(plausibleTable.birth_datetime AS DATE), TO_DATE(TO_CHAR(plausibleTable.year_of_birth) || '0601', 'YYYYMMDD')) > CAST(cdmTable.death_date AS DATE)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM death cdmTable\n    JOIN person plausibleTable\n      ON cdmTable.person_id = plausibleTable.person_id\nWHERE COALESCE(CAST(plausibleTable.birth_datetime AS DATE), TO_DATE(TO_CHAR(plausibleTable.year_of_birth) || '0601', 'YYYYMMDD')) > CAST(cdmTable.death_date AS DATE)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G013": {
+      "check_id": "isStandardValidConcept",
+      "table": "visit_occurrence",
+      "column": "visit_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\n    JOIN concept co\n      ON cdmTable.visit_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\n    JOIN concept co\n      ON cdmTable.visit_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G014": {
+      "check_id": "isRequired",
+      "table": "observation",
+      "column": "observation_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.observation_id AS violating_pk\nFROM observation cdmTable\nWHERE cdmTable.observation_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation cdmTable\nWHERE cdmTable.observation_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G015": {
+      "check_id": "plausibleBeforeDeath",
+      "table": "condition_occurrence",
+      "column": "condition_start_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.condition_start_date IS NOT NULL AND CAST(cdmTable.condition_start_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.condition_start_date IS NOT NULL AND CAST(cdmTable.condition_start_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "note": "DQD 원본에 사망일 +60일 허용 오차가 정의되어 있음",
+      "violation_count": 281
+    },
+    "G016": {
+      "check_id": "withinVisitDates",
+      "table": "procedure_occurrence",
+      "column": "procedure_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\n    JOIN visit_occurrence vo\n      ON cdmTable.visit_occurrence_id = vo.visit_occurrence_id\nWHERE cdmTable.procedure_date < vo.visit_start_date - 7 OR cdmTable.procedure_date > vo.visit_end_date + 7",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\n    JOIN visit_occurrence vo\n      ON cdmTable.visit_occurrence_id = vo.visit_occurrence_id\nWHERE cdmTable.procedure_date < vo.visit_start_date - 7 OR cdmTable.procedure_date > vo.visit_end_date + 7",
+      "note": "DQD 원본에 ±7일 허용 오차가 정의되어 있음",
+      "violation_count": 0
+    },
+    "G017": {
+      "check_id": "measureValueCompleteness",
+      "table": "visit_occurrence",
+      "column": "visit_source_value",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "varchar(50)"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\nWHERE cdmTable.visit_source_value IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\nWHERE cdmTable.visit_source_value IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G018": {
+      "check_id": "isForeignKey",
+      "table": "observation",
+      "column": "observation_source_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "ref_table": "concept",
+        "ref_field": "concept_id",
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.observation_id AS violating_pk\nFROM observation cdmTable\n    LEFT JOIN concept fk\n      ON cdmTable.observation_source_concept_id = fk.concept_id\nWHERE cdmTable.observation_source_concept_id IS NOT NULL AND fk.concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation cdmTable\n    LEFT JOIN concept fk\n      ON cdmTable.observation_source_concept_id = fk.concept_id\nWHERE cdmTable.observation_source_concept_id IS NOT NULL AND fk.concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G019": {
+      "check_id": "standardConceptRecordCompleteness",
+      "table": "measurement",
+      "column": "measurement_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\nWHERE cdmTable.measurement_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\nWHERE cdmTable.measurement_concept_id = 0",
+      "note": "",
+      "violation_count": 0
+    },
+    "G020": {
+      "check_id": "measureValueCompleteness",
+      "table": "condition_occurrence",
+      "column": "condition_type_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\nWHERE cdmTable.condition_type_concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\nWHERE cdmTable.condition_type_concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G021": {
+      "check_id": "plausibleTemporalAfter",
+      "table": "measurement",
+      "column": "measurement_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "pair_field": "birth_datetime",
+        "ref_table": "person",
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\n    JOIN person plausibleTable\n      ON cdmTable.person_id = plausibleTable.person_id\nWHERE COALESCE(CAST(plausibleTable.birth_datetime AS DATE), TO_DATE(TO_CHAR(plausibleTable.year_of_birth) || '0601', 'YYYYMMDD')) > CAST(cdmTable.measurement_date AS DATE)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\n    JOIN person plausibleTable\n      ON cdmTable.person_id = plausibleTable.person_id\nWHERE COALESCE(CAST(plausibleTable.birth_datetime AS DATE), TO_DATE(TO_CHAR(plausibleTable.year_of_birth) || '0601', 'YYYYMMDD')) > CAST(cdmTable.measurement_date AS DATE)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G022": {
+      "check_id": "measureValueCompleteness",
+      "table": "visit_occurrence",
+      "column": "visit_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\nWHERE cdmTable.visit_concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\nWHERE cdmTable.visit_concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G023": {
+      "check_id": "standardConceptRecordCompleteness",
+      "table": "person",
+      "column": "ethnicity_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM person cdmTable\nWHERE cdmTable.ethnicity_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM person cdmTable\nWHERE cdmTable.ethnicity_concept_id = 0",
+      "note": "",
+      "violation_count": 50
+    },
+    "G024": {
+      "check_id": "isRequired",
+      "table": "observation",
+      "column": "observation_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.observation_id AS violating_pk\nFROM observation cdmTable\nWHERE cdmTable.observation_concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation cdmTable\nWHERE cdmTable.observation_concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G025": {
+      "check_id": "plausibleBeforeDeath",
+      "table": "measurement",
+      "column": "measurement_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.measurement_date IS NOT NULL AND CAST(cdmTable.measurement_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.measurement_date IS NOT NULL AND CAST(cdmTable.measurement_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "note": "DQD 원본에 사망일 +60일 허용 오차가 정의되어 있음",
+      "violation_count": 8
+    },
+    "G026": {
+      "check_id": "plausibleValueLow",
+      "table": "observation_period",
+      "column": "observation_period_start_date",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "threshold_value": "TO_DATE('1950-01-01', 'YYYY-MM-DD')",
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.observation_period_id AS violating_pk\nFROM observation_period cdmTable\nWHERE CAST(cdmTable.observation_period_start_date AS DATE) < CAST(TO_DATE('1950-01-01', 'YYYY-MM-DD') AS DATE)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation_period cdmTable\nWHERE CAST(cdmTable.observation_period_start_date AS DATE) < CAST(TO_DATE('1950-01-01', 'YYYY-MM-DD') AS DATE)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G027": {
+      "check_id": "measureValueCompleteness",
+      "table": "person",
+      "column": "month_of_birth",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM person cdmTable\nWHERE cdmTable.month_of_birth IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM person cdmTable\nWHERE cdmTable.month_of_birth IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G028": {
+      "check_id": "isStandardValidConcept",
+      "table": "measurement",
+      "column": "unit_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\n    JOIN concept co\n      ON cdmTable.unit_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\n    JOIN concept co\n      ON cdmTable.unit_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G029": {
+      "check_id": "sourceValueCompleteness",
+      "table": "person",
+      "column": "gender_source_value",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "varchar(50)"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM person cdmTable\nWHERE cdmTable.gender_source_value IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM person cdmTable\nWHERE cdmTable.gender_source_value IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G030": {
+      "check_id": "plausibleBeforeDeath",
+      "table": "drug_exposure",
+      "column": "drug_exposure_start_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.drug_exposure_start_date IS NOT NULL AND CAST(cdmTable.drug_exposure_start_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.drug_exposure_start_date IS NOT NULL AND CAST(cdmTable.drug_exposure_start_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "note": "DQD 원본에 사망일 +60일 허용 오차가 정의되어 있음",
+      "violation_count": 144
+    },
+    "G031": {
+      "check_id": "sourceValueCompleteness",
+      "table": "procedure_occurrence",
+      "column": "procedure_source_value",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "varchar(50)"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.procedure_source_value IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.procedure_source_value IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G032": {
+      "check_id": "isStandardValidConcept",
+      "table": "condition_occurrence",
+      "column": "condition_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\n    JOIN concept co\n      ON cdmTable.condition_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\n    JOIN concept co\n      ON cdmTable.condition_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "note": "",
+      "violation_count": 13370
+    },
+    "G033": {
+      "check_id": "sourceConceptRecordCompleteness",
+      "table": "visit_occurrence",
+      "column": "visit_source_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\nWHERE cdmTable.visit_source_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\nWHERE cdmTable.visit_source_concept_id = 0",
+      "note": "",
+      "violation_count": 47457
+    },
+    "G034": {
+      "check_id": "sourceConceptRecordCompleteness",
+      "table": "person",
+      "column": "gender_source_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM person cdmTable\nWHERE cdmTable.gender_source_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM person cdmTable\nWHERE cdmTable.gender_source_concept_id = 0",
+      "note": "",
+      "violation_count": 1000
+    },
+    "G035": {
+      "check_id": "plausibleGender",
+      "table": "procedure_occurrence",
+      "column": "procedure_concept_id",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "2004090",
+        "gender": "Male"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.procedure_concept_id = 2004090 AND p.gender_concept_id <> 8507",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.procedure_concept_id = 2004090 AND p.gender_concept_id <> 8507",
+      "note": "",
+      "violation_count": 0
+    },
+    "G036": {
+      "check_id": "isForeignKey",
+      "table": "condition_occurrence",
+      "column": "visit_occurrence_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "ref_table": "visit_occurrence",
+        "ref_field": "visit_occurrence_id",
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\n    LEFT JOIN visit_occurrence fk\n      ON cdmTable.visit_occurrence_id = fk.visit_occurrence_id\nWHERE cdmTable.visit_occurrence_id IS NOT NULL AND fk.visit_occurrence_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\n    LEFT JOIN visit_occurrence fk\n      ON cdmTable.visit_occurrence_id = fk.visit_occurrence_id\nWHERE cdmTable.visit_occurrence_id IS NOT NULL AND fk.visit_occurrence_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G037": {
+      "check_id": "measureValueCompleteness",
+      "table": "person",
+      "column": "ethnicity_source_value",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "varchar(50)"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM person cdmTable\nWHERE cdmTable.ethnicity_source_value IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM person cdmTable\nWHERE cdmTable.ethnicity_source_value IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G038": {
+      "check_id": "plausibleTemporalAfter",
+      "table": "observation_period",
+      "column": "observation_period_start_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "pair_field": "birth_datetime",
+        "ref_table": "person",
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.observation_period_id AS violating_pk\nFROM observation_period cdmTable\n    JOIN person plausibleTable\n      ON cdmTable.person_id = plausibleTable.person_id\nWHERE COALESCE(CAST(plausibleTable.birth_datetime AS DATE), TO_DATE(TO_CHAR(plausibleTable.year_of_birth) || '0601', 'YYYYMMDD')) > CAST(cdmTable.observation_period_start_date AS DATE)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation_period cdmTable\n    JOIN person plausibleTable\n      ON cdmTable.person_id = plausibleTable.person_id\nWHERE COALESCE(CAST(plausibleTable.birth_datetime AS DATE), TO_DATE(TO_CHAR(plausibleTable.year_of_birth) || '0601', 'YYYYMMDD')) > CAST(cdmTable.observation_period_start_date AS DATE)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G039": {
+      "check_id": "sourceConceptRecordCompleteness",
+      "table": "death",
+      "column": "cause_source_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM death cdmTable\nWHERE cdmTable.cause_source_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM death cdmTable\nWHERE cdmTable.cause_source_concept_id = 0",
+      "note": "",
+      "violation_count": 43
+    },
+    "G040": {
+      "check_id": "plausibleValueHigh",
+      "table": "visit_occurrence",
+      "column": "visit_start_date",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "threshold_value": "SYSDATE + 1",
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\nWHERE CAST(cdmTable.visit_start_date AS DATE) > CAST(SYSDATE + 1 AS DATE)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\nWHERE CAST(cdmTable.visit_start_date AS DATE) > CAST(SYSDATE + 1 AS DATE)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G041": {
+      "check_id": "plausibleAfterBirth",
+      "table": "condition_occurrence",
+      "column": "condition_end_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.condition_end_date IS NOT NULL AND CAST(cdmTable.condition_end_date AS DATE) < COALESCE(CAST(p.birth_datetime AS DATE), TO_DATE(TO_CHAR(p.year_of_birth) || LPAD(TO_CHAR(COALESCE(p.month_of_birth, 1)), 2, '0') || LPAD(TO_CHAR(COALESCE(p.day_of_birth, 1)), 2, '0'), 'YYYYMMDD'))",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.condition_end_date IS NOT NULL AND CAST(cdmTable.condition_end_date AS DATE) < COALESCE(CAST(p.birth_datetime AS DATE), TO_DATE(TO_CHAR(p.year_of_birth) || LPAD(TO_CHAR(COALESCE(p.month_of_birth, 1)), 2, '0') || LPAD(TO_CHAR(COALESCE(p.day_of_birth, 1)), 2, '0'), 'YYYYMMDD'))",
+      "note": "",
+      "violation_count": 0
+    },
+    "G042": {
+      "check_id": "standardConceptRecordCompleteness",
+      "table": "measurement",
+      "column": "unit_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\nWHERE cdmTable.unit_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\nWHERE cdmTable.unit_concept_id = 0",
+      "note": "",
+      "violation_count": 2858
+    },
+    "G043": {
+      "check_id": "standardConceptRecordCompleteness",
+      "table": "condition_occurrence",
+      "column": "condition_type_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\nWHERE cdmTable.condition_type_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\nWHERE cdmTable.condition_type_concept_id = 0",
+      "note": "",
+      "violation_count": 0
+    },
+    "G044": {
+      "check_id": "plausibleGenderUseDescendants",
+      "table": "procedure_occurrence",
+      "column": "procedure_concept_id",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "4250917, 4077750, 4043199, 4040577",
+        "gender": "Male"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\n    JOIN concept_ancestor ca ON ca.descendant_concept_id = cdmTable.procedure_concept_id\nWHERE ca.ancestor_concept_id IN (4250917, 4077750, 4043199, 4040577) AND p.gender_concept_id <> 8507",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\n    JOIN concept_ancestor ca ON ca.descendant_concept_id = cdmTable.procedure_concept_id\nWHERE ca.ancestor_concept_id IN (4250917, 4077750, 4043199, 4040577) AND p.gender_concept_id <> 8507",
+      "note": "",
+      "violation_count": 0
+    },
+    "G045": {
+      "check_id": "plausibleAfterBirth",
+      "table": "drug_exposure",
+      "column": "drug_exposure_end_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.drug_exposure_end_date IS NOT NULL AND CAST(cdmTable.drug_exposure_end_date AS DATE) < COALESCE(CAST(p.birth_datetime AS DATE), TO_DATE(TO_CHAR(p.year_of_birth) || LPAD(TO_CHAR(COALESCE(p.month_of_birth, 1)), 2, '0') || LPAD(TO_CHAR(COALESCE(p.day_of_birth, 1)), 2, '0'), 'YYYYMMDD'))",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.drug_exposure_end_date IS NOT NULL AND CAST(cdmTable.drug_exposure_end_date AS DATE) < COALESCE(CAST(p.birth_datetime AS DATE), TO_DATE(TO_CHAR(p.year_of_birth) || LPAD(TO_CHAR(COALESCE(p.month_of_birth, 1)), 2, '0') || LPAD(TO_CHAR(COALESCE(p.day_of_birth, 1)), 2, '0'), 'YYYYMMDD'))",
+      "note": "",
+      "violation_count": 0
+    },
+    "G046": {
+      "check_id": "standardConceptRecordCompleteness",
+      "table": "drug_exposure",
+      "column": "drug_type_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\nWHERE cdmTable.drug_type_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\nWHERE cdmTable.drug_type_concept_id = 0",
+      "note": "",
+      "violation_count": 0
+    },
+    "G047": {
+      "check_id": "isStandardValidConcept",
+      "table": "observation_period",
+      "column": "period_type_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.observation_period_id AS violating_pk\nFROM observation_period cdmTable\n    JOIN concept co\n      ON cdmTable.period_type_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation_period cdmTable\n    JOIN concept co\n      ON cdmTable.period_type_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "note": "",
+      "violation_count": 1048
+    },
+    "G048": {
+      "check_id": "isForeignKey",
+      "table": "procedure_occurrence",
+      "column": "provider_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "ref_table": "provider",
+        "ref_field": "provider_id",
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\n    LEFT JOIN provider fk\n      ON cdmTable.provider_id = fk.provider_id\nWHERE cdmTable.provider_id IS NOT NULL AND fk.provider_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\n    LEFT JOIN provider fk\n      ON cdmTable.provider_id = fk.provider_id\nWHERE cdmTable.provider_id IS NOT NULL AND fk.provider_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G049": {
+      "check_id": "isForeignKey",
+      "table": "condition_occurrence",
+      "column": "person_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "ref_table": "person",
+        "ref_field": "person_id",
+        "col_type": "bigint"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\n    LEFT JOIN person fk\n      ON cdmTable.person_id = fk.person_id\nWHERE cdmTable.person_id IS NOT NULL AND fk.person_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\n    LEFT JOIN person fk\n      ON cdmTable.person_id = fk.person_id\nWHERE cdmTable.person_id IS NOT NULL AND fk.person_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G050": {
+      "check_id": "isStandardValidConcept",
+      "table": "measurement",
+      "column": "operator_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\n    JOIN concept co\n      ON cdmTable.operator_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\n    JOIN concept co\n      ON cdmTable.operator_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G051": {
+      "check_id": "isRequired",
+      "table": "drug_exposure",
+      "column": "person_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "bigint"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\nWHERE cdmTable.person_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\nWHERE cdmTable.person_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G052": {
+      "check_id": "isStandardValidConcept",
+      "table": "death",
+      "column": "cause_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM death cdmTable\n    JOIN concept co\n      ON cdmTable.cause_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM death cdmTable\n    JOIN concept co\n      ON cdmTable.cause_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G053": {
+      "check_id": "isForeignKey",
+      "table": "procedure_occurrence",
+      "column": "procedure_type_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "ref_table": "concept",
+        "ref_field": "concept_id",
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\n    LEFT JOIN concept fk\n      ON cdmTable.procedure_type_concept_id = fk.concept_id\nWHERE cdmTable.procedure_type_concept_id IS NOT NULL AND fk.concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\n    LEFT JOIN concept fk\n      ON cdmTable.procedure_type_concept_id = fk.concept_id\nWHERE cdmTable.procedure_type_concept_id IS NOT NULL AND fk.concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G054": {
+      "check_id": "withinVisitDates",
+      "table": "measurement",
+      "column": "measurement_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\n    JOIN visit_occurrence vo\n      ON cdmTable.visit_occurrence_id = vo.visit_occurrence_id\nWHERE cdmTable.measurement_date < vo.visit_start_date - 7 OR cdmTable.measurement_date > vo.visit_end_date + 7",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\n    JOIN visit_occurrence vo\n      ON cdmTable.visit_occurrence_id = vo.visit_occurrence_id\nWHERE cdmTable.measurement_date < vo.visit_start_date - 7 OR cdmTable.measurement_date > vo.visit_end_date + 7",
+      "note": "DQD 원본에 ±7일 허용 오차가 정의되어 있음",
+      "violation_count": 0
+    },
+    "G055": {
+      "check_id": "measureValueCompleteness",
+      "table": "drug_exposure",
+      "column": "drug_type_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\nWHERE cdmTable.drug_type_concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\nWHERE cdmTable.drug_type_concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G056": {
+      "check_id": "sourceConceptRecordCompleteness",
+      "table": "condition_occurrence",
+      "column": "condition_source_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\nWHERE cdmTable.condition_source_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\nWHERE cdmTable.condition_source_concept_id = 0",
+      "note": "",
+      "violation_count": 0
+    },
+    "G057": {
+      "check_id": "plausibleValueHigh",
+      "table": "death",
+      "column": "death_date",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "threshold_value": "SYSDATE + 1",
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM death cdmTable\nWHERE CAST(cdmTable.death_date AS DATE) > CAST(SYSDATE + 1 AS DATE)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM death cdmTable\nWHERE CAST(cdmTable.death_date AS DATE) > CAST(SYSDATE + 1 AS DATE)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G058": {
+      "check_id": "plausibleGender",
+      "table": "procedure_occurrence",
+      "column": "procedure_concept_id",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "4032622",
+        "gender": "Female"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.procedure_concept_id = 4032622 AND p.gender_concept_id <> 8532",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.procedure_concept_id = 4032622 AND p.gender_concept_id <> 8532",
+      "note": "",
+      "violation_count": 0
+    },
+    "G059": {
+      "check_id": "sourceConceptRecordCompleteness",
+      "table": "person",
+      "column": "ethnicity_source_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM person cdmTable\nWHERE cdmTable.ethnicity_source_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM person cdmTable\nWHERE cdmTable.ethnicity_source_concept_id = 0",
+      "note": "",
+      "violation_count": 1000
+    },
+    "G060": {
+      "check_id": "isRequired",
+      "table": "person",
+      "column": "ethnicity_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM person cdmTable\nWHERE cdmTable.ethnicity_concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM person cdmTable\nWHERE cdmTable.ethnicity_concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G061": {
+      "check_id": "isRequired",
+      "table": "observation_period",
+      "column": "period_type_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.observation_period_id AS violating_pk\nFROM observation_period cdmTable\nWHERE cdmTable.period_type_concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation_period cdmTable\nWHERE cdmTable.period_type_concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G062": {
+      "check_id": "standardConceptRecordCompleteness",
+      "table": "visit_occurrence",
+      "column": "visit_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\nWHERE cdmTable.visit_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\nWHERE cdmTable.visit_concept_id = 0",
+      "note": "",
+      "violation_count": 40473
+    },
+    "G063": {
+      "check_id": "withinVisitDates",
+      "table": "drug_exposure",
+      "column": "drug_exposure_start_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\n    JOIN visit_occurrence vo\n      ON cdmTable.visit_occurrence_id = vo.visit_occurrence_id\nWHERE cdmTable.drug_exposure_start_date < vo.visit_start_date - 7 OR cdmTable.drug_exposure_start_date > vo.visit_end_date + 7",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\n    JOIN visit_occurrence vo\n      ON cdmTable.visit_occurrence_id = vo.visit_occurrence_id\nWHERE cdmTable.drug_exposure_start_date < vo.visit_start_date - 7 OR cdmTable.drug_exposure_start_date > vo.visit_end_date + 7",
+      "note": "DQD 원본에 ±7일 허용 오차가 정의되어 있음",
+      "violation_count": 0
+    },
+    "G064": {
+      "check_id": "withinVisitDates",
+      "table": "observation",
+      "column": "observation_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.observation_id AS violating_pk\nFROM observation cdmTable\n    JOIN visit_occurrence vo\n      ON cdmTable.visit_occurrence_id = vo.visit_occurrence_id\nWHERE cdmTable.observation_date < vo.visit_start_date - 7 OR cdmTable.observation_date > vo.visit_end_date + 7",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation cdmTable\n    JOIN visit_occurrence vo\n      ON cdmTable.visit_occurrence_id = vo.visit_occurrence_id\nWHERE cdmTable.observation_date < vo.visit_start_date - 7 OR cdmTable.observation_date > vo.visit_end_date + 7",
+      "note": "DQD 원본에 ±7일 허용 오차가 정의되어 있음",
+      "violation_count": 0
+    },
+    "G065": {
+      "check_id": "plausibleDuringLife",
+      "table": "visit_occurrence",
+      "column": "visit_end_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.visit_end_date IS NOT NULL AND CAST(cdmTable.visit_end_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.visit_end_date IS NOT NULL AND CAST(cdmTable.visit_end_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "note": "DQD 원본에 사망일 +60일 허용 오차가 정의되어 있음",
+      "violation_count": 80
+    },
+    "G066": {
+      "check_id": "isPrimaryKey",
+      "table": "condition_occurrence",
+      "column": "condition_occurrence_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "bigint"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\nWHERE cdmTable.condition_occurrence_id IN (SELECT condition_occurrence_id FROM condition_occurrence GROUP BY condition_occurrence_id HAVING COUNT(*) > 1)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\nWHERE cdmTable.condition_occurrence_id IN (SELECT condition_occurrence_id FROM condition_occurrence GROUP BY condition_occurrence_id HAVING COUNT(*) > 1)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G067": {
+      "check_id": "isForeignKey",
+      "table": "measurement",
+      "column": "person_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "ref_table": "person",
+        "ref_field": "person_id",
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\n    LEFT JOIN person fk\n      ON cdmTable.person_id = fk.person_id\nWHERE cdmTable.person_id IS NOT NULL AND fk.person_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\n    LEFT JOIN person fk\n      ON cdmTable.person_id = fk.person_id\nWHERE cdmTable.person_id IS NOT NULL AND fk.person_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G068": {
+      "check_id": "measureValueCompleteness",
+      "table": "person",
+      "column": "day_of_birth",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM person cdmTable\nWHERE cdmTable.day_of_birth IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM person cdmTable\nWHERE cdmTable.day_of_birth IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G069": {
+      "check_id": "standardConceptRecordCompleteness",
+      "table": "death",
+      "column": "cause_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM death cdmTable\nWHERE cdmTable.cause_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM death cdmTable\nWHERE cdmTable.cause_concept_id = 0",
+      "note": "",
+      "violation_count": 43
+    },
+    "G070": {
+      "check_id": "plausibleDuringLife",
+      "table": "procedure_occurrence",
+      "column": "procedure_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.procedure_date IS NOT NULL AND CAST(cdmTable.procedure_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.procedure_date IS NOT NULL AND CAST(cdmTable.procedure_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "note": "DQD 원본에 사망일 +60일 허용 오차가 정의되어 있음",
+      "violation_count": 119
+    },
+    "G071": {
+      "check_id": "plausibleDuringLife",
+      "table": "drug_exposure",
+      "column": "drug_exposure_start_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.drug_exposure_start_date IS NOT NULL AND CAST(cdmTable.drug_exposure_start_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.drug_exposure_start_date IS NOT NULL AND CAST(cdmTable.drug_exposure_start_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "note": "DQD 원본에 사망일 +60일 허용 오차가 정의되어 있음",
+      "violation_count": 144
+    },
+    "G072": {
+      "check_id": "plausibleTemporalAfter",
+      "table": "visit_occurrence",
+      "column": "visit_start_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "pair_field": "birth_datetime",
+        "ref_table": "person",
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\n    JOIN person plausibleTable\n      ON cdmTable.person_id = plausibleTable.person_id\nWHERE COALESCE(CAST(plausibleTable.birth_datetime AS DATE), TO_DATE(TO_CHAR(plausibleTable.year_of_birth) || '0601', 'YYYYMMDD')) > CAST(cdmTable.visit_start_date AS DATE)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\n    JOIN person plausibleTable\n      ON cdmTable.person_id = plausibleTable.person_id\nWHERE COALESCE(CAST(plausibleTable.birth_datetime AS DATE), TO_DATE(TO_CHAR(plausibleTable.year_of_birth) || '0601', 'YYYYMMDD')) > CAST(cdmTable.visit_start_date AS DATE)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G073": {
+      "check_id": "measureValueCompleteness",
+      "table": "procedure_occurrence",
+      "column": "procedure_occurrence_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.procedure_occurrence_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.procedure_occurrence_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G074": {
+      "check_id": "isRequired",
+      "table": "visit_occurrence",
+      "column": "visit_occurrence_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\nWHERE cdmTable.visit_occurrence_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\nWHERE cdmTable.visit_occurrence_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G075": {
+      "check_id": "plausibleStartBeforeEnd",
+      "table": "drug_exposure",
+      "column": "drug_exposure_start_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "ST_MF",
+      "gold_params": {
+        "pair_field": "drug_exposure_end_date",
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\nWHERE cdmTable.drug_exposure_start_date IS NOT NULL AND cdmTable.drug_exposure_end_date IS NOT NULL AND CAST(cdmTable.drug_exposure_start_date AS DATE) > CAST(cdmTable.drug_exposure_end_date AS DATE)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\nWHERE cdmTable.drug_exposure_start_date IS NOT NULL AND cdmTable.drug_exposure_end_date IS NOT NULL AND CAST(cdmTable.drug_exposure_start_date AS DATE) > CAST(cdmTable.drug_exposure_end_date AS DATE)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G076": {
+      "check_id": "standardConceptRecordCompleteness",
+      "table": "observation",
+      "column": "unit_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.observation_id AS violating_pk\nFROM observation cdmTable\nWHERE cdmTable.unit_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation cdmTable\nWHERE cdmTable.unit_concept_id = 0",
+      "note": "",
+      "violation_count": 13481
+    },
+    "G077": {
+      "check_id": "isStandardValidConcept",
+      "table": "procedure_occurrence",
+      "column": "procedure_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\n    JOIN concept co\n      ON cdmTable.procedure_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\n    JOIN concept co\n      ON cdmTable.procedure_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "note": "",
+      "violation_count": 2272
+    },
+    "G078": {
+      "check_id": "isStandardValidConcept",
+      "table": "measurement",
+      "column": "measurement_type_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\n    JOIN concept co\n      ON cdmTable.measurement_type_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\n    JOIN concept co\n      ON cdmTable.measurement_type_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "note": "",
+      "violation_count": 2858
+    },
+    "G079": {
+      "check_id": "standardConceptRecordCompleteness",
+      "table": "measurement",
+      "column": "measurement_type_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\nWHERE cdmTable.measurement_type_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\nWHERE cdmTable.measurement_type_concept_id = 0",
+      "note": "",
+      "violation_count": 0
+    },
+    "G080": {
+      "check_id": "plausibleAfterBirth",
+      "table": "observation_period",
+      "column": "observation_period_end_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.observation_period_id AS violating_pk\nFROM observation_period cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.observation_period_end_date IS NOT NULL AND CAST(cdmTable.observation_period_end_date AS DATE) < COALESCE(CAST(p.birth_datetime AS DATE), TO_DATE(TO_CHAR(p.year_of_birth) || LPAD(TO_CHAR(COALESCE(p.month_of_birth, 1)), 2, '0') || LPAD(TO_CHAR(COALESCE(p.day_of_birth, 1)), 2, '0'), 'YYYYMMDD'))",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation_period cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.observation_period_end_date IS NOT NULL AND CAST(cdmTable.observation_period_end_date AS DATE) < COALESCE(CAST(p.birth_datetime AS DATE), TO_DATE(TO_CHAR(p.year_of_birth) || LPAD(TO_CHAR(COALESCE(p.month_of_birth, 1)), 2, '0') || LPAD(TO_CHAR(COALESCE(p.day_of_birth, 1)), 2, '0'), 'YYYYMMDD'))",
+      "note": "",
+      "violation_count": 0
+    },
+    "G081": {
+      "check_id": "isForeignKey",
+      "table": "observation_period",
+      "column": "period_type_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "ref_table": "concept",
+        "ref_field": "concept_id",
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.observation_period_id AS violating_pk\nFROM observation_period cdmTable\n    LEFT JOIN concept fk\n      ON cdmTable.period_type_concept_id = fk.concept_id\nWHERE cdmTable.period_type_concept_id IS NOT NULL AND fk.concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation_period cdmTable\n    LEFT JOIN concept fk\n      ON cdmTable.period_type_concept_id = fk.concept_id\nWHERE cdmTable.period_type_concept_id IS NOT NULL AND fk.concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G082": {
+      "check_id": "isForeignKey",
+      "table": "observation",
+      "column": "person_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "ref_table": "person",
+        "ref_field": "person_id",
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.observation_id AS violating_pk\nFROM observation cdmTable\n    LEFT JOIN person fk\n      ON cdmTable.person_id = fk.person_id\nWHERE cdmTable.person_id IS NOT NULL AND fk.person_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation cdmTable\n    LEFT JOIN person fk\n      ON cdmTable.person_id = fk.person_id\nWHERE cdmTable.person_id IS NOT NULL AND fk.person_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G083": {
+      "check_id": "isForeignKey",
+      "table": "drug_exposure",
+      "column": "drug_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "ref_table": "concept",
+        "ref_field": "concept_id",
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\n    LEFT JOIN concept fk\n      ON cdmTable.drug_concept_id = fk.concept_id\nWHERE cdmTable.drug_concept_id IS NOT NULL AND fk.concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\n    LEFT JOIN concept fk\n      ON cdmTable.drug_concept_id = fk.concept_id\nWHERE cdmTable.drug_concept_id IS NOT NULL AND fk.concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G084": {
+      "check_id": "plausibleGenderUseDescendants",
+      "table": "condition_occurrence",
+      "column": "condition_concept_id",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "4090861, 4025213",
+        "gender": "Male"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\n    JOIN concept_ancestor ca ON ca.descendant_concept_id = cdmTable.condition_concept_id\nWHERE ca.ancestor_concept_id IN (4090861, 4025213) AND p.gender_concept_id <> 8507",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\n    JOIN concept_ancestor ca ON ca.descendant_concept_id = cdmTable.condition_concept_id\nWHERE ca.ancestor_concept_id IN (4090861, 4025213) AND p.gender_concept_id <> 8507",
+      "note": "",
+      "violation_count": 0
+    },
+    "G085": {
+      "check_id": "plausibleGender",
+      "table": "condition_occurrence",
+      "column": "condition_concept_id",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "193437",
+        "gender": "Female"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.condition_concept_id = 193437 AND p.gender_concept_id <> 8532",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.condition_concept_id = 193437 AND p.gender_concept_id <> 8532",
+      "note": "",
+      "violation_count": 3
+    },
+    "G086": {
+      "check_id": "sourceValueCompleteness",
+      "table": "person",
+      "column": "race_source_value",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "varchar(50)"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM person cdmTable\nWHERE cdmTable.race_source_value IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM person cdmTable\nWHERE cdmTable.race_source_value IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G087": {
+      "check_id": "standardConceptRecordCompleteness",
+      "table": "observation_period",
+      "column": "period_type_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.observation_period_id AS violating_pk\nFROM observation_period cdmTable\nWHERE cdmTable.period_type_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation_period cdmTable\nWHERE cdmTable.period_type_concept_id = 0",
+      "note": "",
+      "violation_count": 0
+    },
+    "G088": {
+      "check_id": "plausibleValueLow",
+      "table": "person",
+      "column": "year_of_birth",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "threshold_value": "1850",
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM person cdmTable\nWHERE cdmTable.year_of_birth < 1850",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM person cdmTable\nWHERE cdmTable.year_of_birth < 1850",
+      "note": "",
+      "violation_count": 0
+    },
+    "G089": {
+      "check_id": "isRequired",
+      "table": "person",
+      "column": "race_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM person cdmTable\nWHERE cdmTable.race_concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM person cdmTable\nWHERE cdmTable.race_concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G090": {
+      "check_id": "plausibleGender",
+      "table": "procedure_occurrence",
+      "column": "procedure_concept_id",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "4127886",
+        "gender": "Female"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.procedure_concept_id = 4127886 AND p.gender_concept_id <> 8532",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.procedure_concept_id = 4127886 AND p.gender_concept_id <> 8532",
+      "note": "",
+      "violation_count": 0
+    },
+    "G091": {
+      "check_id": "measureValueCompleteness",
+      "table": "visit_occurrence",
+      "column": "visit_source_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\nWHERE cdmTable.visit_source_concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\nWHERE cdmTable.visit_source_concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G092": {
+      "check_id": "isStandardValidConcept",
+      "table": "observation",
+      "column": "unit_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.observation_id AS violating_pk\nFROM observation cdmTable\n    JOIN concept co\n      ON cdmTable.unit_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation cdmTable\n    JOIN concept co\n      ON cdmTable.unit_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G093": {
+      "check_id": "plausibleTemporalAfter",
+      "table": "observation_period",
+      "column": "observation_period_end_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "ST_MF",
+      "gold_params": {
+        "pair_field": "observation_period_start_date",
+        "ref_table": "observation_period",
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.observation_period_id AS violating_pk\nFROM observation_period cdmTable\nWHERE CAST(cdmTable.observation_period_start_date AS DATE) > CAST(cdmTable.observation_period_end_date AS DATE)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation_period cdmTable\nWHERE CAST(cdmTable.observation_period_start_date AS DATE) > CAST(cdmTable.observation_period_end_date AS DATE)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G094": {
+      "check_id": "isForeignKey",
+      "table": "observation",
+      "column": "value_as_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "ref_table": "concept",
+        "ref_field": "concept_id",
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.observation_id AS violating_pk\nFROM observation cdmTable\n    LEFT JOIN concept fk\n      ON cdmTable.value_as_concept_id = fk.concept_id\nWHERE cdmTable.value_as_concept_id IS NOT NULL AND fk.concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation cdmTable\n    LEFT JOIN concept fk\n      ON cdmTable.value_as_concept_id = fk.concept_id\nWHERE cdmTable.value_as_concept_id IS NOT NULL AND fk.concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G095": {
+      "check_id": "plausibleGenderUseDescendants",
+      "table": "procedure_occurrence",
+      "column": "procedure_concept_id",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "4041261",
+        "gender": "Female"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\n    JOIN concept_ancestor ca ON ca.descendant_concept_id = cdmTable.procedure_concept_id\nWHERE ca.ancestor_concept_id IN (4041261) AND p.gender_concept_id <> 8532",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\n    JOIN concept_ancestor ca ON ca.descendant_concept_id = cdmTable.procedure_concept_id\nWHERE ca.ancestor_concept_id IN (4041261) AND p.gender_concept_id <> 8532",
+      "note": "",
+      "violation_count": 0
+    },
+    "G096": {
+      "check_id": "isRequired",
+      "table": "visit_occurrence",
+      "column": "visit_type_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\nWHERE cdmTable.visit_type_concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\nWHERE cdmTable.visit_type_concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G097": {
+      "check_id": "measureValueCompleteness",
+      "table": "procedure_occurrence",
+      "column": "procedure_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.procedure_concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.procedure_concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G098": {
+      "check_id": "plausibleGender",
+      "table": "condition_occurrence",
+      "column": "condition_concept_id",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "45772671",
+        "gender": "Male"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.condition_concept_id = 45772671 AND p.gender_concept_id <> 8507",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.condition_concept_id = 45772671 AND p.gender_concept_id <> 8507",
+      "note": "",
+      "violation_count": 0
+    },
+    "G099": {
+      "check_id": "isForeignKey",
+      "table": "procedure_occurrence",
+      "column": "person_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "ref_table": "person",
+        "ref_field": "person_id",
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\n    LEFT JOIN person fk\n      ON cdmTable.person_id = fk.person_id\nWHERE cdmTable.person_id IS NOT NULL AND fk.person_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\n    LEFT JOIN person fk\n      ON cdmTable.person_id = fk.person_id\nWHERE cdmTable.person_id IS NOT NULL AND fk.person_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G100": {
+      "check_id": "measureValueCompleteness",
+      "table": "condition_occurrence",
+      "column": "condition_source_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\nWHERE cdmTable.condition_source_concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\nWHERE cdmTable.condition_source_concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G101": {
+      "check_id": "plausibleUnitConceptIds",
+      "table": "measurement",
+      "column": "measurement_concept_id",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "ST_MF",
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "3000593",
+        "unit_concept_ids": "8845,8725"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\nWHERE cdmTable.measurement_concept_id = 3000593 AND cdmTable.unit_concept_id IS NOT NULL AND (cdmTable.unit_concept_id NOT IN (8845,8725, 0))",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\nWHERE cdmTable.measurement_concept_id = 3000593 AND cdmTable.unit_concept_id IS NOT NULL AND (cdmTable.unit_concept_id NOT IN (8845,8725, 0))",
+      "note": "",
+      "violation_count": 0
+    },
+    "G102": {
+      "check_id": "sourceConceptRecordCompleteness",
+      "table": "person",
+      "column": "race_source_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM person cdmTable\nWHERE cdmTable.race_source_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM person cdmTable\nWHERE cdmTable.race_source_concept_id = 0",
+      "note": "",
+      "violation_count": 1000
+    },
+    "G103": {
+      "check_id": "sourceValueCompleteness",
+      "table": "measurement",
+      "column": "measurement_source_value",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "varchar(50)"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\nWHERE cdmTable.measurement_source_value IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\nWHERE cdmTable.measurement_source_value IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G104": {
+      "check_id": "plausibleUnitConceptIds",
+      "table": "measurement",
+      "column": "measurement_concept_id",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "ST_MF",
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "3024561",
+        "unit_concept_ids": "8636,8713"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\nWHERE cdmTable.measurement_concept_id = 3024561 AND cdmTable.unit_concept_id IS NOT NULL AND (cdmTable.unit_concept_id NOT IN (8636,8713, 0))",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\nWHERE cdmTable.measurement_concept_id = 3024561 AND cdmTable.unit_concept_id IS NOT NULL AND (cdmTable.unit_concept_id NOT IN (8636,8713, 0))",
+      "note": "",
+      "violation_count": 0
+    },
+    "G105": {
+      "check_id": "isRequired",
+      "table": "observation_period",
+      "column": "observation_period_end_date",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.observation_period_id AS violating_pk\nFROM observation_period cdmTable\nWHERE cdmTable.observation_period_end_date IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation_period cdmTable\nWHERE cdmTable.observation_period_end_date IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G106": {
+      "check_id": "isStandardValidConcept",
+      "table": "procedure_occurrence",
+      "column": "procedure_type_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\n    JOIN concept co\n      ON cdmTable.procedure_type_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\n    JOIN concept co\n      ON cdmTable.procedure_type_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "note": "",
+      "violation_count": 62189
+    },
+    "G107": {
+      "check_id": "isStandardValidConcept",
+      "table": "drug_exposure",
+      "column": "drug_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\n    JOIN concept co\n      ON cdmTable.drug_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\n    JOIN concept co\n      ON cdmTable.drug_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "note": "",
+      "violation_count": 1860
+    },
+    "G108": {
+      "check_id": "isForeignKey",
+      "table": "person",
+      "column": "race_source_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "ref_table": "concept",
+        "ref_field": "concept_id",
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM person cdmTable\n    LEFT JOIN concept fk\n      ON cdmTable.race_source_concept_id = fk.concept_id\nWHERE cdmTable.race_source_concept_id IS NOT NULL AND fk.concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM person cdmTable\n    LEFT JOIN concept fk\n      ON cdmTable.race_source_concept_id = fk.concept_id\nWHERE cdmTable.race_source_concept_id IS NOT NULL AND fk.concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G109": {
+      "check_id": "plausibleValueLow",
+      "table": "drug_exposure",
+      "column": "drug_exposure_start_date",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "threshold_value": "TO_DATE('1950-01-01', 'YYYY-MM-DD')",
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\nWHERE CAST(cdmTable.drug_exposure_start_date AS DATE) < CAST(TO_DATE('1950-01-01', 'YYYY-MM-DD') AS DATE)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\nWHERE CAST(cdmTable.drug_exposure_start_date AS DATE) < CAST(TO_DATE('1950-01-01', 'YYYY-MM-DD') AS DATE)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G110": {
+      "check_id": "withinVisitDates",
+      "table": "condition_occurrence",
+      "column": "condition_start_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\n    JOIN visit_occurrence vo\n      ON cdmTable.visit_occurrence_id = vo.visit_occurrence_id\nWHERE cdmTable.condition_start_date < vo.visit_start_date - 7 OR cdmTable.condition_start_date > vo.visit_end_date + 7",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\n    JOIN visit_occurrence vo\n      ON cdmTable.visit_occurrence_id = vo.visit_occurrence_id\nWHERE cdmTable.condition_start_date < vo.visit_start_date - 7 OR cdmTable.condition_start_date > vo.visit_end_date + 7",
+      "note": "DQD 원본에 ±7일 허용 오차가 정의되어 있음",
+      "violation_count": 0
+    },
+    "G111": {
+      "check_id": "plausibleBeforeDeath",
+      "table": "observation_period",
+      "column": "observation_period_end_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.observation_period_id AS violating_pk\nFROM observation_period cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.observation_period_end_date IS NOT NULL AND CAST(cdmTable.observation_period_end_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation_period cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.observation_period_end_date IS NOT NULL AND CAST(cdmTable.observation_period_end_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "note": "DQD 원본에 사망일 +60일 허용 오차가 정의되어 있음",
+      "violation_count": 2
+    },
+    "G112": {
+      "check_id": "isRequired",
+      "table": "drug_exposure",
+      "column": "drug_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\nWHERE cdmTable.drug_concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\nWHERE cdmTable.drug_concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G113": {
+      "check_id": "standardConceptRecordCompleteness",
+      "table": "procedure_occurrence",
+      "column": "procedure_type_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.procedure_type_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.procedure_type_concept_id = 0",
+      "note": "",
+      "violation_count": 0
+    },
+    "G114": {
+      "check_id": "standardConceptRecordCompleteness",
+      "table": "drug_exposure",
+      "column": "drug_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\nWHERE cdmTable.drug_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\nWHERE cdmTable.drug_concept_id = 0",
+      "note": "",
+      "violation_count": 0
+    },
+    "G115": {
+      "check_id": "plausibleBeforeDeath",
+      "table": "visit_occurrence",
+      "column": "visit_start_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.visit_start_date IS NOT NULL AND CAST(cdmTable.visit_start_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.visit_start_date IS NOT NULL AND CAST(cdmTable.visit_start_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "note": "DQD 원본에 사망일 +60일 허용 오차가 정의되어 있음",
+      "violation_count": 80
+    },
+    "G116": {
+      "check_id": "plausibleAfterBirth",
+      "table": "visit_occurrence",
+      "column": "visit_start_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.visit_start_date IS NOT NULL AND CAST(cdmTable.visit_start_date AS DATE) < COALESCE(CAST(p.birth_datetime AS DATE), TO_DATE(TO_CHAR(p.year_of_birth) || LPAD(TO_CHAR(COALESCE(p.month_of_birth, 1)), 2, '0') || LPAD(TO_CHAR(COALESCE(p.day_of_birth, 1)), 2, '0'), 'YYYYMMDD'))",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.visit_start_date IS NOT NULL AND CAST(cdmTable.visit_start_date AS DATE) < COALESCE(CAST(p.birth_datetime AS DATE), TO_DATE(TO_CHAR(p.year_of_birth) || LPAD(TO_CHAR(COALESCE(p.month_of_birth, 1)), 2, '0') || LPAD(TO_CHAR(COALESCE(p.day_of_birth, 1)), 2, '0'), 'YYYYMMDD'))",
+      "note": "",
+      "violation_count": 0
+    },
+    "G117": {
+      "check_id": "plausibleAfterBirth",
+      "table": "visit_occurrence",
+      "column": "visit_end_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.visit_end_date IS NOT NULL AND CAST(cdmTable.visit_end_date AS DATE) < COALESCE(CAST(p.birth_datetime AS DATE), TO_DATE(TO_CHAR(p.year_of_birth) || LPAD(TO_CHAR(COALESCE(p.month_of_birth, 1)), 2, '0') || LPAD(TO_CHAR(COALESCE(p.day_of_birth, 1)), 2, '0'), 'YYYYMMDD'))",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.visit_end_date IS NOT NULL AND CAST(cdmTable.visit_end_date AS DATE) < COALESCE(CAST(p.birth_datetime AS DATE), TO_DATE(TO_CHAR(p.year_of_birth) || LPAD(TO_CHAR(COALESCE(p.month_of_birth, 1)), 2, '0') || LPAD(TO_CHAR(COALESCE(p.day_of_birth, 1)), 2, '0'), 'YYYYMMDD'))",
+      "note": "",
+      "violation_count": 0
+    },
+    "G118": {
+      "check_id": "plausibleStartBeforeEnd",
+      "table": "condition_occurrence",
+      "column": "condition_start_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "ST_MF",
+      "gold_params": {
+        "pair_field": "condition_end_date",
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\nWHERE cdmTable.condition_start_date IS NOT NULL AND cdmTable.condition_end_date IS NOT NULL AND CAST(cdmTable.condition_start_date AS DATE) > CAST(cdmTable.condition_end_date AS DATE)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\nWHERE cdmTable.condition_start_date IS NOT NULL AND cdmTable.condition_end_date IS NOT NULL AND CAST(cdmTable.condition_start_date AS DATE) > CAST(cdmTable.condition_end_date AS DATE)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G119": {
+      "check_id": "isForeignKey",
+      "table": "procedure_occurrence",
+      "column": "procedure_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "ref_table": "concept",
+        "ref_field": "concept_id",
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\n    LEFT JOIN concept fk\n      ON cdmTable.procedure_concept_id = fk.concept_id\nWHERE cdmTable.procedure_concept_id IS NOT NULL AND fk.concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\n    LEFT JOIN concept fk\n      ON cdmTable.procedure_concept_id = fk.concept_id\nWHERE cdmTable.procedure_concept_id IS NOT NULL AND fk.concept_id IS NULL",
+      "note": "",
+      "violation_count": 58466
+    },
+    "G120": {
+      "check_id": "sourceValueCompleteness",
+      "table": "drug_exposure",
+      "column": "drug_source_value",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "varchar(50)"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\nWHERE cdmTable.drug_source_value IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\nWHERE cdmTable.drug_source_value IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G121": {
+      "check_id": "isForeignKey",
+      "table": "visit_occurrence",
+      "column": "provider_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "ref_table": "provider",
+        "ref_field": "provider_id",
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\n    LEFT JOIN provider fk\n      ON cdmTable.provider_id = fk.provider_id\nWHERE cdmTable.provider_id IS NOT NULL AND fk.provider_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\n    LEFT JOIN provider fk\n      ON cdmTable.provider_id = fk.provider_id\nWHERE cdmTable.provider_id IS NOT NULL AND fk.provider_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G122": {
+      "check_id": "isForeignKey",
+      "table": "death",
+      "column": "cause_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "ref_table": "concept",
+        "ref_field": "concept_id",
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM death cdmTable\n    LEFT JOIN concept fk\n      ON cdmTable.cause_concept_id = fk.concept_id\nWHERE cdmTable.cause_concept_id IS NOT NULL AND fk.concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM death cdmTable\n    LEFT JOIN concept fk\n      ON cdmTable.cause_concept_id = fk.concept_id\nWHERE cdmTable.cause_concept_id IS NOT NULL AND fk.concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G123": {
+      "check_id": "sourceValueCompleteness",
+      "table": "condition_occurrence",
+      "column": "condition_source_value",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "varchar(50)"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\nWHERE cdmTable.condition_source_value IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\nWHERE cdmTable.condition_source_value IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G124": {
+      "check_id": "isPrimaryKey",
+      "table": "observation_period",
+      "column": "observation_period_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.observation_period_id AS violating_pk\nFROM observation_period cdmTable\nWHERE cdmTable.observation_period_id IN (SELECT observation_period_id FROM observation_period GROUP BY observation_period_id HAVING COUNT(*) > 1)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation_period cdmTable\nWHERE cdmTable.observation_period_id IN (SELECT observation_period_id FROM observation_period GROUP BY observation_period_id HAVING COUNT(*) > 1)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G125": {
+      "check_id": "plausibleGender",
+      "table": "condition_occurrence",
+      "column": "condition_concept_id",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "4194652",
+        "gender": "Female"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.condition_concept_id = 4194652 AND p.gender_concept_id <> 8532",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.condition_concept_id = 4194652 AND p.gender_concept_id <> 8532",
+      "note": "",
+      "violation_count": 0
+    },
+    "G126": {
+      "check_id": "isStandardValidConcept",
+      "table": "person",
+      "column": "race_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM person cdmTable\n    JOIN concept co\n      ON cdmTable.race_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM person cdmTable\n    JOIN concept co\n      ON cdmTable.race_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G127": {
+      "check_id": "isForeignKey",
+      "table": "procedure_occurrence",
+      "column": "modifier_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "ref_table": "concept",
+        "ref_field": "concept_id",
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\n    LEFT JOIN concept fk\n      ON cdmTable.modifier_concept_id = fk.concept_id\nWHERE cdmTable.modifier_concept_id IS NOT NULL AND fk.concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\n    LEFT JOIN concept fk\n      ON cdmTable.modifier_concept_id = fk.concept_id\nWHERE cdmTable.modifier_concept_id IS NOT NULL AND fk.concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G128": {
+      "check_id": "isRequired",
+      "table": "procedure_occurrence",
+      "column": "procedure_type_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.procedure_type_concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.procedure_type_concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G129": {
+      "check_id": "measureValueCompleteness",
+      "table": "condition_occurrence",
+      "column": "condition_end_date",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\nWHERE cdmTable.condition_end_date IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\nWHERE cdmTable.condition_end_date IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G130": {
+      "check_id": "isPrimaryKey",
+      "table": "measurement",
+      "column": "measurement_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\nWHERE cdmTable.measurement_id IN (SELECT measurement_id FROM measurement GROUP BY measurement_id HAVING COUNT(*) > 1)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\nWHERE cdmTable.measurement_id IN (SELECT measurement_id FROM measurement GROUP BY measurement_id HAVING COUNT(*) > 1)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G131": {
+      "check_id": "isPrimaryKey",
+      "table": "person",
+      "column": "person_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM person cdmTable\nWHERE cdmTable.person_id IN (SELECT person_id FROM person GROUP BY person_id HAVING COUNT(*) > 1)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM person cdmTable\nWHERE cdmTable.person_id IN (SELECT person_id FROM person GROUP BY person_id HAVING COUNT(*) > 1)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G132": {
+      "check_id": "measureValueCompleteness",
+      "table": "person",
+      "column": "race_source_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM person cdmTable\nWHERE cdmTable.race_source_concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM person cdmTable\nWHERE cdmTable.race_source_concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G133": {
+      "check_id": "isForeignKey",
+      "table": "procedure_occurrence",
+      "column": "procedure_source_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "ref_table": "concept",
+        "ref_field": "concept_id",
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\n    LEFT JOIN concept fk\n      ON cdmTable.procedure_source_concept_id = fk.concept_id\nWHERE cdmTable.procedure_source_concept_id IS NOT NULL AND fk.concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\n    LEFT JOIN concept fk\n      ON cdmTable.procedure_source_concept_id = fk.concept_id\nWHERE cdmTable.procedure_source_concept_id IS NOT NULL AND fk.concept_id IS NULL",
+      "note": "",
+      "violation_count": 58466
+    },
+    "G134": {
+      "check_id": "isStandardValidConcept",
+      "table": "visit_occurrence",
+      "column": "visit_type_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\n    JOIN concept co\n      ON cdmTable.visit_type_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\n    JOIN concept co\n      ON cdmTable.visit_type_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "note": "",
+      "violation_count": 47457
+    },
+    "G135": {
+      "check_id": "plausibleUnitConceptIds",
+      "table": "measurement",
+      "column": "measurement_concept_id",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "ST_MF",
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "4313591",
+        "unit_concept_ids": "8483,8541"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\nWHERE cdmTable.measurement_concept_id = 4313591 AND cdmTable.unit_concept_id IS NOT NULL AND (cdmTable.unit_concept_id NOT IN (8483,8541, 0))",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\nWHERE cdmTable.measurement_concept_id = 4313591 AND cdmTable.unit_concept_id IS NOT NULL AND (cdmTable.unit_concept_id NOT IN (8483,8541, 0))",
+      "note": "",
+      "violation_count": 0
+    },
+    "G136": {
+      "check_id": "plausibleDuringLife",
+      "table": "condition_occurrence",
+      "column": "condition_end_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.condition_end_date IS NOT NULL AND CAST(cdmTable.condition_end_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.condition_end_date IS NOT NULL AND CAST(cdmTable.condition_end_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "note": "DQD 원본에 사망일 +60일 허용 오차가 정의되어 있음",
+      "violation_count": 281
+    },
+    "G137": {
+      "check_id": "sourceValueCompleteness",
+      "table": "observation",
+      "column": "observation_source_value",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "varchar(50)"
+      },
+      "rows_sql": "SELECT cdmTable.observation_id AS violating_pk\nFROM observation cdmTable\nWHERE cdmTable.observation_source_value IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation cdmTable\nWHERE cdmTable.observation_source_value IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G138": {
+      "check_id": "plausibleAfterBirth",
+      "table": "observation",
+      "column": "observation_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.observation_id AS violating_pk\nFROM observation cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.observation_date IS NOT NULL AND CAST(cdmTable.observation_date AS DATE) < COALESCE(CAST(p.birth_datetime AS DATE), TO_DATE(TO_CHAR(p.year_of_birth) || LPAD(TO_CHAR(COALESCE(p.month_of_birth, 1)), 2, '0') || LPAD(TO_CHAR(COALESCE(p.day_of_birth, 1)), 2, '0'), 'YYYYMMDD'))",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.observation_date IS NOT NULL AND CAST(cdmTable.observation_date AS DATE) < COALESCE(CAST(p.birth_datetime AS DATE), TO_DATE(TO_CHAR(p.year_of_birth) || LPAD(TO_CHAR(COALESCE(p.month_of_birth, 1)), 2, '0') || LPAD(TO_CHAR(COALESCE(p.day_of_birth, 1)), 2, '0'), 'YYYYMMDD'))",
+      "note": "",
+      "violation_count": 0
+    },
+    "G139": {
+      "check_id": "plausibleBeforeDeath",
+      "table": "observation_period",
+      "column": "observation_period_start_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.observation_period_id AS violating_pk\nFROM observation_period cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.observation_period_start_date IS NOT NULL AND CAST(cdmTable.observation_period_start_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation_period cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.observation_period_start_date IS NOT NULL AND CAST(cdmTable.observation_period_start_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "note": "DQD 원본에 사망일 +60일 허용 오차가 정의되어 있음",
+      "violation_count": 0
+    },
+    "G140": {
+      "check_id": "isPrimaryKey",
+      "table": "procedure_occurrence",
+      "column": "procedure_occurrence_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.procedure_occurrence_id IN (SELECT procedure_occurrence_id FROM procedure_occurrence GROUP BY procedure_occurrence_id HAVING COUNT(*) > 1)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.procedure_occurrence_id IN (SELECT procedure_occurrence_id FROM procedure_occurrence GROUP BY procedure_occurrence_id HAVING COUNT(*) > 1)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G141": {
+      "check_id": "standardConceptRecordCompleteness",
+      "table": "observation",
+      "column": "observation_type_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.observation_id AS violating_pk\nFROM observation cdmTable\nWHERE cdmTable.observation_type_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation cdmTable\nWHERE cdmTable.observation_type_concept_id = 0",
+      "note": "",
+      "violation_count": 0
+    },
+    "G142": {
+      "check_id": "plausibleUnitConceptIds",
+      "table": "measurement",
+      "column": "measurement_concept_id",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "ST_MF",
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "3002109",
+        "unit_concept_ids": "8523,8596,8606,-1"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\nWHERE cdmTable.measurement_concept_id = 3002109 AND cdmTable.unit_concept_id IS NOT NULL AND (cdmTable.unit_concept_id NOT IN (8523,8596,8606,-1, 0))",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\nWHERE cdmTable.measurement_concept_id = 3002109 AND cdmTable.unit_concept_id IS NOT NULL AND (cdmTable.unit_concept_id NOT IN (8523,8596,8606,-1, 0))",
+      "note": "",
+      "violation_count": 0
+    },
+    "G143": {
+      "check_id": "sourceValueCompleteness",
+      "table": "person",
+      "column": "ethnicity_source_value",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "varchar(50)"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM person cdmTable\nWHERE cdmTable.ethnicity_source_value IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM person cdmTable\nWHERE cdmTable.ethnicity_source_value IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G144": {
+      "check_id": "measureValueCompleteness",
+      "table": "measurement",
+      "column": "measurement_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\nWHERE cdmTable.measurement_concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\nWHERE cdmTable.measurement_concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G145": {
+      "check_id": "isRequired",
+      "table": "condition_occurrence",
+      "column": "condition_occurrence_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "bigint"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\nWHERE cdmTable.condition_occurrence_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\nWHERE cdmTable.condition_occurrence_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G146": {
+      "check_id": "isStandardValidConcept",
+      "table": "procedure_occurrence",
+      "column": "modifier_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\n    JOIN concept co\n      ON cdmTable.modifier_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\n    JOIN concept co\n      ON cdmTable.modifier_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G147": {
+      "check_id": "plausibleUnitConceptIds",
+      "table": "measurement",
+      "column": "measurement_concept_id",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "ST_MF",
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "3027970",
+        "unit_concept_ids": "8636,8713,8950"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\nWHERE cdmTable.measurement_concept_id = 3027970 AND cdmTable.unit_concept_id IS NOT NULL AND (cdmTable.unit_concept_id NOT IN (8636,8713,8950, 0))",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\nWHERE cdmTable.measurement_concept_id = 3027970 AND cdmTable.unit_concept_id IS NOT NULL AND (cdmTable.unit_concept_id NOT IN (8636,8713,8950, 0))",
+      "note": "",
+      "violation_count": 0
+    },
+    "G148": {
+      "check_id": "sourceConceptRecordCompleteness",
+      "table": "drug_exposure",
+      "column": "drug_source_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\nWHERE cdmTable.drug_source_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\nWHERE cdmTable.drug_source_concept_id = 0",
+      "note": "",
+      "violation_count": 0
+    },
+    "G149": {
+      "check_id": "isRequired",
+      "table": "procedure_occurrence",
+      "column": "procedure_date",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.procedure_date IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.procedure_date IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G150": {
+      "check_id": "measureValueCompleteness",
+      "table": "measurement",
+      "column": "measurement_source_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\nWHERE cdmTable.measurement_source_concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\nWHERE cdmTable.measurement_source_concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G151": {
+      "check_id": "plausibleTemporalAfter",
+      "table": "drug_exposure",
+      "column": "drug_exposure_end_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "ST_MF",
+      "gold_params": {
+        "pair_field": "drug_exposure_start_date",
+        "ref_table": "drug_exposure",
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\nWHERE CAST(cdmTable.drug_exposure_start_date AS DATE) > CAST(cdmTable.drug_exposure_end_date AS DATE)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\nWHERE CAST(cdmTable.drug_exposure_start_date AS DATE) > CAST(cdmTable.drug_exposure_end_date AS DATE)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G152": {
+      "check_id": "isRequired",
+      "table": "person",
+      "column": "year_of_birth",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM person cdmTable\nWHERE cdmTable.year_of_birth IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM person cdmTable\nWHERE cdmTable.year_of_birth IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G153": {
+      "check_id": "measureValueCompleteness",
+      "table": "person",
+      "column": "location_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM person cdmTable\nWHERE cdmTable.location_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM person cdmTable\nWHERE cdmTable.location_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G154": {
+      "check_id": "isStandardValidConcept",
+      "table": "death",
+      "column": "death_type_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM death cdmTable\n    JOIN concept co\n      ON cdmTable.death_type_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM death cdmTable\n    JOIN concept co\n      ON cdmTable.death_type_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "note": "",
+      "violation_count": 45
+    },
+    "G155": {
+      "check_id": "isRequired",
+      "table": "visit_occurrence",
+      "column": "visit_end_date",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\nWHERE cdmTable.visit_end_date IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\nWHERE cdmTable.visit_end_date IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G156": {
+      "check_id": "isStandardValidConcept",
+      "table": "drug_exposure",
+      "column": "drug_type_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\n    JOIN concept co\n      ON cdmTable.drug_type_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\n    JOIN concept co\n      ON cdmTable.drug_type_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "note": "",
+      "violation_count": 49542
+    },
+    "G157": {
+      "check_id": "sourceConceptRecordCompleteness",
+      "table": "measurement",
+      "column": "measurement_source_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\nWHERE cdmTable.measurement_source_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\nWHERE cdmTable.measurement_source_concept_id = 0",
+      "note": "",
+      "violation_count": 0
+    },
+    "G158": {
+      "check_id": "isForeignKey",
+      "table": "drug_exposure",
+      "column": "visit_occurrence_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "ref_table": "visit_occurrence",
+        "ref_field": "visit_occurrence_id",
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\n    LEFT JOIN visit_occurrence fk\n      ON cdmTable.visit_occurrence_id = fk.visit_occurrence_id\nWHERE cdmTable.visit_occurrence_id IS NOT NULL AND fk.visit_occurrence_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\n    LEFT JOIN visit_occurrence fk\n      ON cdmTable.visit_occurrence_id = fk.visit_occurrence_id\nWHERE cdmTable.visit_occurrence_id IS NOT NULL AND fk.visit_occurrence_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G159": {
+      "check_id": "plausibleValueLow",
+      "table": "drug_exposure",
+      "column": "quantity",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "threshold_value": "0.0000001",
+        "col_type": "float"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\nWHERE cdmTable.quantity < 0.0000001",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\nWHERE cdmTable.quantity < 0.0000001",
+      "note": "",
+      "violation_count": 1942
+    },
+    "G160": {
+      "check_id": "plausibleValueLow",
+      "table": "condition_occurrence",
+      "column": "condition_end_date",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "threshold_value": "TO_DATE('1950-01-01', 'YYYY-MM-DD')",
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\nWHERE CAST(cdmTable.condition_end_date AS DATE) < CAST(TO_DATE('1950-01-01', 'YYYY-MM-DD') AS DATE)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\nWHERE CAST(cdmTable.condition_end_date AS DATE) < CAST(TO_DATE('1950-01-01', 'YYYY-MM-DD') AS DATE)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G161": {
+      "check_id": "isPrimaryKey",
+      "table": "drug_exposure",
+      "column": "drug_exposure_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "bigint"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\nWHERE cdmTable.drug_exposure_id IN (SELECT drug_exposure_id FROM drug_exposure GROUP BY drug_exposure_id HAVING COUNT(*) > 1)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\nWHERE cdmTable.drug_exposure_id IN (SELECT drug_exposure_id FROM drug_exposure GROUP BY drug_exposure_id HAVING COUNT(*) > 1)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G162": {
+      "check_id": "plausibleValueHigh",
+      "table": "visit_occurrence",
+      "column": "visit_end_date",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "threshold_value": "SYSDATE + 1",
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\nWHERE CAST(cdmTable.visit_end_date AS DATE) > CAST(SYSDATE + 1 AS DATE)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\nWHERE CAST(cdmTable.visit_end_date AS DATE) > CAST(SYSDATE + 1 AS DATE)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G163": {
+      "check_id": "measureValueCompleteness",
+      "table": "procedure_occurrence",
+      "column": "person_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.person_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.person_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G164": {
+      "check_id": "plausibleDuringLife",
+      "table": "condition_occurrence",
+      "column": "condition_start_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.condition_start_date IS NOT NULL AND CAST(cdmTable.condition_start_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.condition_start_date IS NOT NULL AND CAST(cdmTable.condition_start_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "note": "DQD 원본에 사망일 +60일 허용 오차가 정의되어 있음",
+      "violation_count": 281
+    },
+    "G165": {
+      "check_id": "isStandardValidConcept",
+      "table": "observation",
+      "column": "qualifier_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.observation_id AS violating_pk\nFROM observation cdmTable\n    JOIN concept co\n      ON cdmTable.qualifier_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation cdmTable\n    JOIN concept co\n      ON cdmTable.qualifier_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G166": {
+      "check_id": "plausibleDuringLife",
+      "table": "drug_exposure",
+      "column": "drug_exposure_end_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.drug_exposure_end_date IS NOT NULL AND CAST(cdmTable.drug_exposure_end_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\n    JOIN death de ON cdmTable.person_id = de.person_id\nWHERE cdmTable.drug_exposure_end_date IS NOT NULL AND CAST(cdmTable.drug_exposure_end_date AS DATE) > CAST(de.death_date AS DATE) + 60",
+      "note": "DQD 원본에 사망일 +60일 허용 오차가 정의되어 있음",
+      "violation_count": 4
+    },
+    "G167": {
+      "check_id": "standardConceptRecordCompleteness",
+      "table": "death",
+      "column": "death_type_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM death cdmTable\nWHERE cdmTable.death_type_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM death cdmTable\nWHERE cdmTable.death_type_concept_id = 0",
+      "note": "",
+      "violation_count": 0
+    },
+    "G168": {
+      "check_id": "sourceValueCompleteness",
+      "table": "death",
+      "column": "cause_source_value",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "varchar(50)"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM death cdmTable\nWHERE cdmTable.cause_source_value IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM death cdmTable\nWHERE cdmTable.cause_source_value IS NULL",
+      "note": "",
+      "violation_count": 43
+    },
+    "G169": {
+      "check_id": "isStandardValidConcept",
+      "table": "observation",
+      "column": "observation_type_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.observation_id AS violating_pk\nFROM observation cdmTable\n    JOIN concept co\n      ON cdmTable.observation_type_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation cdmTable\n    JOIN concept co\n      ON cdmTable.observation_type_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "note": "",
+      "violation_count": 13481
+    },
+    "G170": {
+      "check_id": "plausibleValueHigh",
+      "table": "person",
+      "column": "day_of_birth",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "threshold_value": "31",
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM person cdmTable\nWHERE cdmTable.day_of_birth > 31",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM person cdmTable\nWHERE cdmTable.day_of_birth > 31",
+      "note": "",
+      "violation_count": 0
+    },
+    "G171": {
+      "check_id": "isRequired",
+      "table": "observation",
+      "column": "observation_type_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.observation_id AS violating_pk\nFROM observation cdmTable\nWHERE cdmTable.observation_type_concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation cdmTable\nWHERE cdmTable.observation_type_concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G172": {
+      "check_id": "standardConceptRecordCompleteness",
+      "table": "observation",
+      "column": "observation_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.observation_id AS violating_pk\nFROM observation cdmTable\nWHERE cdmTable.observation_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation cdmTable\nWHERE cdmTable.observation_concept_id = 0",
+      "note": "",
+      "violation_count": 0
+    },
+    "G173": {
+      "check_id": "isStandardValidConcept",
+      "table": "condition_occurrence",
+      "column": "condition_type_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\n    JOIN concept co\n      ON cdmTable.condition_type_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\n    JOIN concept co\n      ON cdmTable.condition_type_concept_id = co.concept_id\nWHERE co.concept_id != 0 AND (co.standard_concept != 'S' OR co.invalid_reason IS NOT NULL OR co.standard_concept IS NULL)",
+      "note": "",
+      "violation_count": 160322
+    },
+    "G174": {
+      "check_id": "plausibleUnitConceptIds",
+      "table": "measurement",
+      "column": "measurement_concept_id",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "ST_MF",
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "3004249",
+        "unit_concept_ids": "8876"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\nWHERE cdmTable.measurement_concept_id = 3004249 AND cdmTable.unit_concept_id IS NOT NULL AND (cdmTable.unit_concept_id NOT IN (8876, 0))",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\nWHERE cdmTable.measurement_concept_id = 3004249 AND cdmTable.unit_concept_id IS NOT NULL AND (cdmTable.unit_concept_id NOT IN (8876, 0))",
+      "note": "",
+      "violation_count": 0
+    },
+    "G175": {
+      "check_id": "plausibleGenderUseDescendants",
+      "table": "condition_occurrence",
+      "column": "condition_concept_id",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "4095793 , 443343, 4024004 , 4172857, 444094 , 197810, 4158481",
+        "gender": "Female"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\n    JOIN concept_ancestor ca ON ca.descendant_concept_id = cdmTable.condition_concept_id\nWHERE ca.ancestor_concept_id IN (4095793 , 443343, 4024004 , 4172857, 444094 , 197810, 4158481) AND p.gender_concept_id <> 8532",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\n    JOIN concept_ancestor ca ON ca.descendant_concept_id = cdmTable.condition_concept_id\nWHERE ca.ancestor_concept_id IN (4095793 , 443343, 4024004 , 4172857, 444094 , 197810, 4158481) AND p.gender_concept_id <> 8532",
+      "note": "",
+      "violation_count": 0
+    },
+    "G176": {
+      "check_id": "standardConceptRecordCompleteness",
+      "table": "person",
+      "column": "race_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM person cdmTable\nWHERE cdmTable.race_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM person cdmTable\nWHERE cdmTable.race_concept_id = 0",
+      "note": "",
+      "violation_count": 67
+    },
+    "G177": {
+      "check_id": "plausibleStartBeforeEnd",
+      "table": "visit_occurrence",
+      "column": "visit_start_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "ST_MF",
+      "gold_params": {
+        "pair_field": "visit_end_date",
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\nWHERE cdmTable.visit_start_date IS NOT NULL AND cdmTable.visit_end_date IS NOT NULL AND CAST(cdmTable.visit_start_date AS DATE) > CAST(cdmTable.visit_end_date AS DATE)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\nWHERE cdmTable.visit_start_date IS NOT NULL AND cdmTable.visit_end_date IS NOT NULL AND CAST(cdmTable.visit_start_date AS DATE) > CAST(cdmTable.visit_end_date AS DATE)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G178": {
+      "check_id": "plausibleValueHigh",
+      "table": "observation_period",
+      "column": "observation_period_end_date",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "threshold_value": "SYSDATE + 1",
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.observation_period_id AS violating_pk\nFROM observation_period cdmTable\nWHERE CAST(cdmTable.observation_period_end_date AS DATE) > CAST(SYSDATE + 1 AS DATE)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation_period cdmTable\nWHERE CAST(cdmTable.observation_period_end_date AS DATE) > CAST(SYSDATE + 1 AS DATE)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G179": {
+      "check_id": "plausibleStartBeforeEnd",
+      "table": "observation_period",
+      "column": "observation_period_start_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "ST_MF",
+      "gold_params": {
+        "pair_field": "observation_period_end_date",
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.observation_period_id AS violating_pk\nFROM observation_period cdmTable\nWHERE cdmTable.observation_period_start_date IS NOT NULL AND cdmTable.observation_period_end_date IS NOT NULL AND CAST(cdmTable.observation_period_start_date AS DATE) > CAST(cdmTable.observation_period_end_date AS DATE)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation_period cdmTable\nWHERE cdmTable.observation_period_start_date IS NOT NULL AND cdmTable.observation_period_end_date IS NOT NULL AND CAST(cdmTable.observation_period_start_date AS DATE) > CAST(cdmTable.observation_period_end_date AS DATE)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G180": {
+      "check_id": "isRequired",
+      "table": "procedure_occurrence",
+      "column": "procedure_occurrence_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.procedure_occurrence_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.procedure_occurrence_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G181": {
+      "check_id": "measureValueCompleteness",
+      "table": "person",
+      "column": "person_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM person cdmTable\nWHERE cdmTable.person_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM person cdmTable\nWHERE cdmTable.person_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G182": {
+      "check_id": "measureValueCompleteness",
+      "table": "measurement",
+      "column": "unit_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\nWHERE cdmTable.unit_concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\nWHERE cdmTable.unit_concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G183": {
+      "check_id": "measureValueCompleteness",
+      "table": "drug_exposure",
+      "column": "drug_exposure_end_date",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\nWHERE cdmTable.drug_exposure_end_date IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\nWHERE cdmTable.drug_exposure_end_date IS NULL",
+      "note": "",
+      "violation_count": 46596
+    },
+    "G184": {
+      "check_id": "measureValueCompleteness",
+      "table": "observation",
+      "column": "qualifier_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.observation_id AS violating_pk\nFROM observation cdmTable\nWHERE cdmTable.qualifier_concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation cdmTable\nWHERE cdmTable.qualifier_concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G185": {
+      "check_id": "sourceConceptRecordCompleteness",
+      "table": "procedure_occurrence",
+      "column": "procedure_source_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.procedure_source_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.procedure_source_concept_id = 0",
+      "note": "",
+      "violation_count": 0
+    },
+    "G186": {
+      "check_id": "isRequired",
+      "table": "condition_occurrence",
+      "column": "condition_type_concept_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.condition_occurrence_id AS violating_pk\nFROM condition_occurrence cdmTable\nWHERE cdmTable.condition_type_concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM condition_occurrence cdmTable\nWHERE cdmTable.condition_type_concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G187": {
+      "check_id": "plausibleValueLow",
+      "table": "procedure_occurrence",
+      "column": "procedure_date",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "threshold_value": "TO_DATE('1950-01-01', 'YYYY-MM-DD')",
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\nWHERE CAST(cdmTable.procedure_date AS DATE) < CAST(TO_DATE('1950-01-01', 'YYYY-MM-DD') AS DATE)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\nWHERE CAST(cdmTable.procedure_date AS DATE) < CAST(TO_DATE('1950-01-01', 'YYYY-MM-DD') AS DATE)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G188": {
+      "check_id": "standardConceptRecordCompleteness",
+      "table": "procedure_occurrence",
+      "column": "modifier_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.modifier_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.modifier_concept_id = 0",
+      "note": "",
+      "violation_count": 62189
+    },
+    "G189": {
+      "check_id": "plausibleValueHigh",
+      "table": "drug_exposure",
+      "column": "days_supply",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "threshold_value": "365",
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\nWHERE cdmTable.days_supply > 365",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\nWHERE cdmTable.days_supply > 365",
+      "note": "",
+      "violation_count": 0
+    },
+    "G190": {
+      "check_id": "plausibleValueLow",
+      "table": "visit_occurrence",
+      "column": "visit_end_date",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "threshold_value": "TO_DATE('1950-01-01', 'YYYY-MM-DD')",
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\nWHERE CAST(cdmTable.visit_end_date AS DATE) < CAST(TO_DATE('1950-01-01', 'YYYY-MM-DD') AS DATE)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\nWHERE CAST(cdmTable.visit_end_date AS DATE) < CAST(TO_DATE('1950-01-01', 'YYYY-MM-DD') AS DATE)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G191": {
+      "check_id": "standardConceptRecordCompleteness",
+      "table": "procedure_occurrence",
+      "column": "procedure_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.procedure_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\nWHERE cdmTable.procedure_concept_id = 0",
+      "note": "",
+      "violation_count": 0
+    },
+    "G192": {
+      "check_id": "plausibleAfterBirth",
+      "table": "procedure_occurrence",
+      "column": "procedure_date",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.procedure_occurrence_id AS violating_pk\nFROM procedure_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.procedure_date IS NOT NULL AND CAST(cdmTable.procedure_date AS DATE) < COALESCE(CAST(p.birth_datetime AS DATE), TO_DATE(TO_CHAR(p.year_of_birth) || LPAD(TO_CHAR(COALESCE(p.month_of_birth, 1)), 2, '0') || LPAD(TO_CHAR(COALESCE(p.day_of_birth, 1)), 2, '0'), 'YYYYMMDD'))",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM procedure_occurrence cdmTable\n    JOIN person p ON cdmTable.person_id = p.person_id\nWHERE cdmTable.procedure_date IS NOT NULL AND CAST(cdmTable.procedure_date AS DATE) < COALESCE(CAST(p.birth_datetime AS DATE), TO_DATE(TO_CHAR(p.year_of_birth) || LPAD(TO_CHAR(COALESCE(p.month_of_birth, 1)), 2, '0') || LPAD(TO_CHAR(COALESCE(p.day_of_birth, 1)), 2, '0'), 'YYYYMMDD'))",
+      "note": "",
+      "violation_count": 0
+    },
+    "G193": {
+      "check_id": "measureValueCompleteness",
+      "table": "drug_exposure",
+      "column": "drug_source_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\nWHERE cdmTable.drug_source_concept_id IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\nWHERE cdmTable.drug_source_concept_id IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G194": {
+      "check_id": "measureValueCompleteness",
+      "table": "drug_exposure",
+      "column": "drug_exposure_start_date",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\nWHERE cdmTable.drug_exposure_start_date IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\nWHERE cdmTable.drug_exposure_start_date IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G195": {
+      "check_id": "measureValueCompleteness",
+      "table": "observation_period",
+      "column": "observation_period_start_date",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.observation_period_id AS violating_pk\nFROM observation_period cdmTable\nWHERE cdmTable.observation_period_start_date IS NULL",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation_period cdmTable\nWHERE cdmTable.observation_period_start_date IS NULL",
+      "note": "",
+      "violation_count": 0
+    },
+    "G196": {
+      "check_id": "isPrimaryKey",
+      "table": "visit_occurrence",
+      "column": "visit_occurrence_id",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.visit_occurrence_id AS violating_pk\nFROM visit_occurrence cdmTable\nWHERE cdmTable.visit_occurrence_id IN (SELECT visit_occurrence_id FROM visit_occurrence GROUP BY visit_occurrence_id HAVING COUNT(*) > 1)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM visit_occurrence cdmTable\nWHERE cdmTable.visit_occurrence_id IN (SELECT visit_occurrence_id FROM visit_occurrence GROUP BY visit_occurrence_id HAVING COUNT(*) > 1)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G197": {
+      "check_id": "plausibleValueHigh",
+      "table": "drug_exposure",
+      "column": "drug_exposure_end_date",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "threshold_value": "SYSDATE + 1",
+        "col_type": "date"
+      },
+      "rows_sql": "SELECT cdmTable.drug_exposure_id AS violating_pk\nFROM drug_exposure cdmTable\nWHERE CAST(cdmTable.drug_exposure_end_date AS DATE) > CAST(SYSDATE + 1 AS DATE)",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM drug_exposure cdmTable\nWHERE CAST(cdmTable.drug_exposure_end_date AS DATE) > CAST(SYSDATE + 1 AS DATE)",
+      "note": "",
+      "violation_count": 0
+    },
+    "G198": {
+      "check_id": "standardConceptRecordCompleteness",
+      "table": "person",
+      "column": "gender_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.person_id AS violating_pk\nFROM person cdmTable\nWHERE cdmTable.gender_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM person cdmTable\nWHERE cdmTable.gender_concept_id = 0",
+      "note": "",
+      "violation_count": 0
+    },
+    "G199": {
+      "check_id": "sourceConceptRecordCompleteness",
+      "table": "observation",
+      "column": "observation_source_concept_id",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "rows_sql": "SELECT cdmTable.observation_id AS violating_pk\nFROM observation cdmTable\nWHERE cdmTable.observation_source_concept_id = 0",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM observation cdmTable\nWHERE cdmTable.observation_source_concept_id = 0",
+      "note": "",
+      "violation_count": 0
+    },
+    "G200": {
+      "check_id": "plausibleUnitConceptIds",
+      "table": "measurement",
+      "column": "measurement_concept_id",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "ST_MF",
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "3013721",
+        "unit_concept_ids": "8645,8923"
+      },
+      "rows_sql": "SELECT cdmTable.measurement_id AS violating_pk\nFROM measurement cdmTable\nWHERE cdmTable.measurement_concept_id = 3013721 AND cdmTable.unit_concept_id IS NOT NULL AND (cdmTable.unit_concept_id NOT IN (8645,8923, 0))",
+      "count_sql": "SELECT COUNT(*) AS num_violated_rows\nFROM measurement cdmTable\nWHERE cdmTable.measurement_concept_id = 3013721 AND cdmTable.unit_concept_id IS NOT NULL AND (cdmTable.unit_concept_id NOT IN (8645,8923, 0))",
+      "note": "",
+      "violation_count": 0
+    }
+  }
+}

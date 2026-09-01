@@ -1,0 +1,3712 @@
+{
+  "source": "OHDSI DQD OMOP_CDMv5.3 Field_Level",
+  "size": 200,
+  "seed": 42,
+  "data_verified": true,
+  "items": [
+    {
+      "id": "G001",
+      "table": "observation",
+      "column": "observation_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isPrimaryKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "observation의 observation_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G002",
+      "table": "visit_occurrence",
+      "column": "visit_end_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "ST_MF",
+      "expected_checks": [
+        "plausibleTemporalAfter"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "pair_field": "visit_start_date",
+        "ref_table": "visit_occurrence",
+        "col_type": "date"
+      },
+      "query": "visit_occurrence의 visit_end_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G003",
+      "table": "measurement",
+      "column": "measurement_concept_id",
+      "aspect": "표준 개념",
+      "aspect_code": "standard",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isStandardValidConcept"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "measurement의 measurement_concept_id을(를) 표준 개념 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G004",
+      "table": "visit_occurrence",
+      "column": "visit_start_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleDuringLife"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "visit_occurrence의 visit_start_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G005",
+      "table": "procedure_occurrence",
+      "column": "procedure_concept_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isRequired"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "procedure_occurrence의 procedure_concept_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G006",
+      "table": "measurement",
+      "column": "visit_occurrence_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "isForeignKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "ref_table": "visit_occurrence",
+        "ref_field": "visit_occurrence_id",
+        "col_type": "integer"
+      },
+      "query": "measurement의 visit_occurrence_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G007",
+      "table": "visit_occurrence",
+      "column": "visit_source_value",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "sourceValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "varchar(50)"
+      },
+      "query": "visit_occurrence의 visit_source_value을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G008",
+      "table": "visit_occurrence",
+      "column": "visit_type_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "standardConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "visit_occurrence의 visit_type_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G009",
+      "table": "condition_occurrence",
+      "column": "condition_start_date",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "condition_occurrence의 condition_start_date을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G010",
+      "table": "condition_occurrence",
+      "column": "condition_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "standardConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "condition_occurrence의 condition_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G011",
+      "table": "procedure_occurrence",
+      "column": "procedure_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleBeforeDeath"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "procedure_occurrence의 procedure_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G012",
+      "table": "death",
+      "column": "death_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleTemporalAfter"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "pair_field": "birth_datetime",
+        "ref_table": "person",
+        "col_type": "date"
+      },
+      "query": "death의 death_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G013",
+      "table": "visit_occurrence",
+      "column": "visit_concept_id",
+      "aspect": "표준 개념",
+      "aspect_code": "standard",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isStandardValidConcept"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "visit_occurrence의 visit_concept_id을(를) 표준 개념 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G014",
+      "table": "observation",
+      "column": "observation_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isRequired"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "observation의 observation_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G015",
+      "table": "condition_occurrence",
+      "column": "condition_start_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleBeforeDeath"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "condition_occurrence의 condition_start_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G016",
+      "table": "procedure_occurrence",
+      "column": "procedure_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "withinVisitDates"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "procedure_occurrence의 procedure_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G017",
+      "table": "visit_occurrence",
+      "column": "visit_source_value",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "varchar(50)"
+      },
+      "query": "visit_occurrence의 visit_source_value을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G018",
+      "table": "observation",
+      "column": "observation_source_concept_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "isForeignKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "ref_table": "concept",
+        "ref_field": "concept_id",
+        "col_type": "integer"
+      },
+      "query": "observation의 observation_source_concept_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G019",
+      "table": "measurement",
+      "column": "measurement_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "standardConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "measurement의 measurement_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G020",
+      "table": "condition_occurrence",
+      "column": "condition_type_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "condition_occurrence의 condition_type_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G021",
+      "table": "measurement",
+      "column": "measurement_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleTemporalAfter"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "pair_field": "birth_datetime",
+        "ref_table": "person",
+        "col_type": "date"
+      },
+      "query": "measurement의 measurement_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G022",
+      "table": "visit_occurrence",
+      "column": "visit_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "visit_occurrence의 visit_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G023",
+      "table": "person",
+      "column": "ethnicity_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "standardConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "person의 ethnicity_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G024",
+      "table": "observation",
+      "column": "observation_concept_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isRequired"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "observation의 observation_concept_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G025",
+      "table": "measurement",
+      "column": "measurement_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleBeforeDeath"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "measurement의 measurement_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G026",
+      "table": "observation_period",
+      "column": "observation_period_start_date",
+      "aspect": "값 범위",
+      "aspect_code": "value_range",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "plausibleValueLow"
+      ],
+      "threshold": "TO_DATE('1950-01-01', 'YYYY-MM-DD')",
+      "gold_params": {
+        "threshold_value": "TO_DATE('1950-01-01', 'YYYY-MM-DD')",
+        "col_type": "date"
+      },
+      "query": "observation_period의 observation_period_start_date을(를) 값 범위 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G027",
+      "table": "person",
+      "column": "month_of_birth",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "person의 month_of_birth을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G028",
+      "table": "measurement",
+      "column": "unit_concept_id",
+      "aspect": "표준 개념",
+      "aspect_code": "standard",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isStandardValidConcept"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "measurement의 unit_concept_id을(를) 표준 개념 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G029",
+      "table": "person",
+      "column": "gender_source_value",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "sourceValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "varchar(50)"
+      },
+      "query": "person의 gender_source_value을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G030",
+      "table": "drug_exposure",
+      "column": "drug_exposure_start_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleBeforeDeath"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "drug_exposure의 drug_exposure_start_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G031",
+      "table": "procedure_occurrence",
+      "column": "procedure_source_value",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "sourceValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "varchar(50)"
+      },
+      "query": "procedure_occurrence의 procedure_source_value을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G032",
+      "table": "condition_occurrence",
+      "column": "condition_concept_id",
+      "aspect": "표준 개념",
+      "aspect_code": "standard",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isStandardValidConcept"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "condition_occurrence의 condition_concept_id을(를) 표준 개념 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G033",
+      "table": "visit_occurrence",
+      "column": "visit_source_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "sourceConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "visit_occurrence의 visit_source_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G034",
+      "table": "person",
+      "column": "gender_source_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "sourceConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "person의 gender_source_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G035",
+      "table": "procedure_occurrence",
+      "column": "procedure_concept_id",
+      "aspect": "임상 타당성",
+      "aspect_code": "clinical",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleGender"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "2004090",
+        "gender": "Male"
+      },
+      "query": "procedure_occurrence의 procedure_concept_id을(를) 임상 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G036",
+      "table": "condition_occurrence",
+      "column": "visit_occurrence_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "isForeignKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "ref_table": "visit_occurrence",
+        "ref_field": "visit_occurrence_id",
+        "col_type": "integer"
+      },
+      "query": "condition_occurrence의 visit_occurrence_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G037",
+      "table": "person",
+      "column": "ethnicity_source_value",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "varchar(50)"
+      },
+      "query": "person의 ethnicity_source_value을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G038",
+      "table": "observation_period",
+      "column": "observation_period_start_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleTemporalAfter"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "pair_field": "birth_datetime",
+        "ref_table": "person",
+        "col_type": "date"
+      },
+      "query": "observation_period의 observation_period_start_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G039",
+      "table": "death",
+      "column": "cause_source_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "sourceConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "death의 cause_source_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G040",
+      "table": "visit_occurrence",
+      "column": "visit_start_date",
+      "aspect": "값 범위",
+      "aspect_code": "value_range",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "plausibleValueHigh"
+      ],
+      "threshold": "SYSDATE + 1",
+      "gold_params": {
+        "threshold_value": "SYSDATE + 1",
+        "col_type": "date"
+      },
+      "query": "visit_occurrence의 visit_start_date을(를) 값 범위 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G041",
+      "table": "condition_occurrence",
+      "column": "condition_end_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleAfterBirth"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "condition_occurrence의 condition_end_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G042",
+      "table": "measurement",
+      "column": "unit_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "standardConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "measurement의 unit_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G043",
+      "table": "condition_occurrence",
+      "column": "condition_type_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "standardConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "condition_occurrence의 condition_type_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G044",
+      "table": "procedure_occurrence",
+      "column": "procedure_concept_id",
+      "aspect": "임상 타당성",
+      "aspect_code": "clinical",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleGenderUseDescendants"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "4250917, 4077750, 4043199, 4040577",
+        "gender": "Male"
+      },
+      "query": "procedure_occurrence의 procedure_concept_id을(를) 임상 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G045",
+      "table": "drug_exposure",
+      "column": "drug_exposure_end_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleAfterBirth"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "drug_exposure의 drug_exposure_end_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G046",
+      "table": "drug_exposure",
+      "column": "drug_type_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "standardConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "drug_exposure의 drug_type_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G047",
+      "table": "observation_period",
+      "column": "period_type_concept_id",
+      "aspect": "표준 개념",
+      "aspect_code": "standard",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isStandardValidConcept"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "observation_period의 period_type_concept_id을(를) 표준 개념 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G048",
+      "table": "procedure_occurrence",
+      "column": "provider_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "isForeignKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "ref_table": "provider",
+        "ref_field": "provider_id",
+        "col_type": "integer"
+      },
+      "query": "procedure_occurrence의 provider_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G049",
+      "table": "condition_occurrence",
+      "column": "person_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "isForeignKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "ref_table": "person",
+        "ref_field": "person_id",
+        "col_type": "bigint"
+      },
+      "query": "condition_occurrence의 person_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G050",
+      "table": "measurement",
+      "column": "operator_concept_id",
+      "aspect": "표준 개념",
+      "aspect_code": "standard",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isStandardValidConcept"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "measurement의 operator_concept_id을(를) 표준 개념 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G051",
+      "table": "drug_exposure",
+      "column": "person_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isRequired"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "bigint"
+      },
+      "query": "drug_exposure의 person_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G052",
+      "table": "death",
+      "column": "cause_concept_id",
+      "aspect": "표준 개념",
+      "aspect_code": "standard",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isStandardValidConcept"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "death의 cause_concept_id을(를) 표준 개념 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G053",
+      "table": "procedure_occurrence",
+      "column": "procedure_type_concept_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "isForeignKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "ref_table": "concept",
+        "ref_field": "concept_id",
+        "col_type": "integer"
+      },
+      "query": "procedure_occurrence의 procedure_type_concept_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G054",
+      "table": "measurement",
+      "column": "measurement_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "withinVisitDates"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "measurement의 measurement_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G055",
+      "table": "drug_exposure",
+      "column": "drug_type_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "drug_exposure의 drug_type_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G056",
+      "table": "condition_occurrence",
+      "column": "condition_source_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "sourceConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "condition_occurrence의 condition_source_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G057",
+      "table": "death",
+      "column": "death_date",
+      "aspect": "값 범위",
+      "aspect_code": "value_range",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "plausibleValueHigh"
+      ],
+      "threshold": "SYSDATE + 1",
+      "gold_params": {
+        "threshold_value": "SYSDATE + 1",
+        "col_type": "date"
+      },
+      "query": "death의 death_date을(를) 값 범위 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G058",
+      "table": "procedure_occurrence",
+      "column": "procedure_concept_id",
+      "aspect": "임상 타당성",
+      "aspect_code": "clinical",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleGender"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "4032622",
+        "gender": "Female"
+      },
+      "query": "procedure_occurrence의 procedure_concept_id을(를) 임상 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G059",
+      "table": "person",
+      "column": "ethnicity_source_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "sourceConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "person의 ethnicity_source_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G060",
+      "table": "person",
+      "column": "ethnicity_concept_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isRequired"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "person의 ethnicity_concept_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G061",
+      "table": "observation_period",
+      "column": "period_type_concept_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isRequired"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "observation_period의 period_type_concept_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G062",
+      "table": "visit_occurrence",
+      "column": "visit_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "standardConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "visit_occurrence의 visit_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G063",
+      "table": "drug_exposure",
+      "column": "drug_exposure_start_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "withinVisitDates"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "drug_exposure의 drug_exposure_start_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G064",
+      "table": "observation",
+      "column": "observation_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "withinVisitDates"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "observation의 observation_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G065",
+      "table": "visit_occurrence",
+      "column": "visit_end_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleDuringLife"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "visit_occurrence의 visit_end_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G066",
+      "table": "condition_occurrence",
+      "column": "condition_occurrence_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isPrimaryKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "bigint"
+      },
+      "query": "condition_occurrence의 condition_occurrence_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G067",
+      "table": "measurement",
+      "column": "person_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "isForeignKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "ref_table": "person",
+        "ref_field": "person_id",
+        "col_type": "integer"
+      },
+      "query": "measurement의 person_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G068",
+      "table": "person",
+      "column": "day_of_birth",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "person의 day_of_birth을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G069",
+      "table": "death",
+      "column": "cause_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "standardConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "death의 cause_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G070",
+      "table": "procedure_occurrence",
+      "column": "procedure_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleDuringLife"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "procedure_occurrence의 procedure_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G071",
+      "table": "drug_exposure",
+      "column": "drug_exposure_start_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleDuringLife"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "drug_exposure의 drug_exposure_start_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G072",
+      "table": "visit_occurrence",
+      "column": "visit_start_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleTemporalAfter"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "pair_field": "birth_datetime",
+        "ref_table": "person",
+        "col_type": "date"
+      },
+      "query": "visit_occurrence의 visit_start_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G073",
+      "table": "procedure_occurrence",
+      "column": "procedure_occurrence_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "procedure_occurrence의 procedure_occurrence_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G074",
+      "table": "visit_occurrence",
+      "column": "visit_occurrence_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isRequired"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "visit_occurrence의 visit_occurrence_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G075",
+      "table": "drug_exposure",
+      "column": "drug_exposure_start_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "ST_MF",
+      "expected_checks": [
+        "plausibleStartBeforeEnd"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "pair_field": "drug_exposure_end_date",
+        "col_type": "date"
+      },
+      "query": "drug_exposure의 drug_exposure_start_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G076",
+      "table": "observation",
+      "column": "unit_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "standardConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "observation의 unit_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G077",
+      "table": "procedure_occurrence",
+      "column": "procedure_concept_id",
+      "aspect": "표준 개념",
+      "aspect_code": "standard",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isStandardValidConcept"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "procedure_occurrence의 procedure_concept_id을(를) 표준 개념 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G078",
+      "table": "measurement",
+      "column": "measurement_type_concept_id",
+      "aspect": "표준 개념",
+      "aspect_code": "standard",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isStandardValidConcept"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "measurement의 measurement_type_concept_id을(를) 표준 개념 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G079",
+      "table": "measurement",
+      "column": "measurement_type_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "standardConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "measurement의 measurement_type_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G080",
+      "table": "observation_period",
+      "column": "observation_period_end_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleAfterBirth"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "observation_period의 observation_period_end_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G081",
+      "table": "observation_period",
+      "column": "period_type_concept_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "isForeignKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "ref_table": "concept",
+        "ref_field": "concept_id",
+        "col_type": "integer"
+      },
+      "query": "observation_period의 period_type_concept_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G082",
+      "table": "observation",
+      "column": "person_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "isForeignKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "ref_table": "person",
+        "ref_field": "person_id",
+        "col_type": "integer"
+      },
+      "query": "observation의 person_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G083",
+      "table": "drug_exposure",
+      "column": "drug_concept_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "isForeignKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "ref_table": "concept",
+        "ref_field": "concept_id",
+        "col_type": "integer"
+      },
+      "query": "drug_exposure의 drug_concept_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G084",
+      "table": "condition_occurrence",
+      "column": "condition_concept_id",
+      "aspect": "임상 타당성",
+      "aspect_code": "clinical",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleGenderUseDescendants"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "4090861, 4025213",
+        "gender": "Male"
+      },
+      "query": "condition_occurrence의 condition_concept_id을(를) 임상 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G085",
+      "table": "condition_occurrence",
+      "column": "condition_concept_id",
+      "aspect": "임상 타당성",
+      "aspect_code": "clinical",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleGender"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "193437",
+        "gender": "Female"
+      },
+      "query": "condition_occurrence의 condition_concept_id을(를) 임상 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G086",
+      "table": "person",
+      "column": "race_source_value",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "sourceValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "varchar(50)"
+      },
+      "query": "person의 race_source_value을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G087",
+      "table": "observation_period",
+      "column": "period_type_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "standardConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "observation_period의 period_type_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G088",
+      "table": "person",
+      "column": "year_of_birth",
+      "aspect": "값 범위",
+      "aspect_code": "value_range",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "plausibleValueLow"
+      ],
+      "threshold": "1850",
+      "gold_params": {
+        "threshold_value": "1850",
+        "col_type": "integer"
+      },
+      "query": "person의 year_of_birth을(를) 값 범위 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G089",
+      "table": "person",
+      "column": "race_concept_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isRequired"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "person의 race_concept_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G090",
+      "table": "procedure_occurrence",
+      "column": "procedure_concept_id",
+      "aspect": "임상 타당성",
+      "aspect_code": "clinical",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleGender"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "4127886",
+        "gender": "Female"
+      },
+      "query": "procedure_occurrence의 procedure_concept_id을(를) 임상 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G091",
+      "table": "visit_occurrence",
+      "column": "visit_source_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "visit_occurrence의 visit_source_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G092",
+      "table": "observation",
+      "column": "unit_concept_id",
+      "aspect": "표준 개념",
+      "aspect_code": "standard",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isStandardValidConcept"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "observation의 unit_concept_id을(를) 표준 개념 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G093",
+      "table": "observation_period",
+      "column": "observation_period_end_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "ST_MF",
+      "expected_checks": [
+        "plausibleTemporalAfter"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "pair_field": "observation_period_start_date",
+        "ref_table": "observation_period",
+        "col_type": "date"
+      },
+      "query": "observation_period의 observation_period_end_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G094",
+      "table": "observation",
+      "column": "value_as_concept_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "isForeignKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "ref_table": "concept",
+        "ref_field": "concept_id",
+        "col_type": "integer"
+      },
+      "query": "observation의 value_as_concept_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G095",
+      "table": "procedure_occurrence",
+      "column": "procedure_concept_id",
+      "aspect": "임상 타당성",
+      "aspect_code": "clinical",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleGenderUseDescendants"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "4041261",
+        "gender": "Female"
+      },
+      "query": "procedure_occurrence의 procedure_concept_id을(를) 임상 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G096",
+      "table": "visit_occurrence",
+      "column": "visit_type_concept_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isRequired"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "visit_occurrence의 visit_type_concept_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G097",
+      "table": "procedure_occurrence",
+      "column": "procedure_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "procedure_occurrence의 procedure_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G098",
+      "table": "condition_occurrence",
+      "column": "condition_concept_id",
+      "aspect": "임상 타당성",
+      "aspect_code": "clinical",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleGender"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "45772671",
+        "gender": "Male"
+      },
+      "query": "condition_occurrence의 condition_concept_id을(를) 임상 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G099",
+      "table": "procedure_occurrence",
+      "column": "person_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "isForeignKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "ref_table": "person",
+        "ref_field": "person_id",
+        "col_type": "integer"
+      },
+      "query": "procedure_occurrence의 person_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G100",
+      "table": "condition_occurrence",
+      "column": "condition_source_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "condition_occurrence의 condition_source_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G101",
+      "table": "measurement",
+      "column": "measurement_concept_id",
+      "aspect": "임상 타당성",
+      "aspect_code": "clinical",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "ST_MF",
+      "expected_checks": [
+        "plausibleUnitConceptIds"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "3000593",
+        "unit_concept_ids": "8845,8725"
+      },
+      "query": "measurement의 measurement_concept_id을(를) 임상 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G102",
+      "table": "person",
+      "column": "race_source_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "sourceConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "person의 race_source_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G103",
+      "table": "measurement",
+      "column": "measurement_source_value",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "sourceValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "varchar(50)"
+      },
+      "query": "measurement의 measurement_source_value을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G104",
+      "table": "measurement",
+      "column": "measurement_concept_id",
+      "aspect": "임상 타당성",
+      "aspect_code": "clinical",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "ST_MF",
+      "expected_checks": [
+        "plausibleUnitConceptIds"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "3024561",
+        "unit_concept_ids": "8636,8713"
+      },
+      "query": "measurement의 measurement_concept_id을(를) 임상 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G105",
+      "table": "observation_period",
+      "column": "observation_period_end_date",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isRequired"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "observation_period의 observation_period_end_date을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G106",
+      "table": "procedure_occurrence",
+      "column": "procedure_type_concept_id",
+      "aspect": "표준 개념",
+      "aspect_code": "standard",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isStandardValidConcept"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "procedure_occurrence의 procedure_type_concept_id을(를) 표준 개념 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G107",
+      "table": "drug_exposure",
+      "column": "drug_concept_id",
+      "aspect": "표준 개념",
+      "aspect_code": "standard",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isStandardValidConcept"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "drug_exposure의 drug_concept_id을(를) 표준 개념 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G108",
+      "table": "person",
+      "column": "race_source_concept_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "isForeignKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "ref_table": "concept",
+        "ref_field": "concept_id",
+        "col_type": "integer"
+      },
+      "query": "person의 race_source_concept_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G109",
+      "table": "drug_exposure",
+      "column": "drug_exposure_start_date",
+      "aspect": "값 범위",
+      "aspect_code": "value_range",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "plausibleValueLow"
+      ],
+      "threshold": "TO_DATE('1950-01-01', 'YYYY-MM-DD')",
+      "gold_params": {
+        "threshold_value": "TO_DATE('1950-01-01', 'YYYY-MM-DD')",
+        "col_type": "date"
+      },
+      "query": "drug_exposure의 drug_exposure_start_date을(를) 값 범위 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G110",
+      "table": "condition_occurrence",
+      "column": "condition_start_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "withinVisitDates"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "condition_occurrence의 condition_start_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G111",
+      "table": "observation_period",
+      "column": "observation_period_end_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleBeforeDeath"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "observation_period의 observation_period_end_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G112",
+      "table": "drug_exposure",
+      "column": "drug_concept_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isRequired"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "drug_exposure의 drug_concept_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G113",
+      "table": "procedure_occurrence",
+      "column": "procedure_type_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "standardConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "procedure_occurrence의 procedure_type_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G114",
+      "table": "drug_exposure",
+      "column": "drug_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "standardConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "drug_exposure의 drug_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G115",
+      "table": "visit_occurrence",
+      "column": "visit_start_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleBeforeDeath"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "visit_occurrence의 visit_start_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G116",
+      "table": "visit_occurrence",
+      "column": "visit_start_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleAfterBirth"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "visit_occurrence의 visit_start_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G117",
+      "table": "visit_occurrence",
+      "column": "visit_end_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleAfterBirth"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "visit_occurrence의 visit_end_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G118",
+      "table": "condition_occurrence",
+      "column": "condition_start_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "ST_MF",
+      "expected_checks": [
+        "plausibleStartBeforeEnd"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "pair_field": "condition_end_date",
+        "col_type": "date"
+      },
+      "query": "condition_occurrence의 condition_start_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G119",
+      "table": "procedure_occurrence",
+      "column": "procedure_concept_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "isForeignKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "ref_table": "concept",
+        "ref_field": "concept_id",
+        "col_type": "integer"
+      },
+      "query": "procedure_occurrence의 procedure_concept_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G120",
+      "table": "drug_exposure",
+      "column": "drug_source_value",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "sourceValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "varchar(50)"
+      },
+      "query": "drug_exposure의 drug_source_value을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G121",
+      "table": "visit_occurrence",
+      "column": "provider_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "isForeignKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "ref_table": "provider",
+        "ref_field": "provider_id",
+        "col_type": "integer"
+      },
+      "query": "visit_occurrence의 provider_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G122",
+      "table": "death",
+      "column": "cause_concept_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "isForeignKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "ref_table": "concept",
+        "ref_field": "concept_id",
+        "col_type": "integer"
+      },
+      "query": "death의 cause_concept_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G123",
+      "table": "condition_occurrence",
+      "column": "condition_source_value",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "sourceValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "varchar(50)"
+      },
+      "query": "condition_occurrence의 condition_source_value을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G124",
+      "table": "observation_period",
+      "column": "observation_period_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isPrimaryKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "observation_period의 observation_period_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G125",
+      "table": "condition_occurrence",
+      "column": "condition_concept_id",
+      "aspect": "임상 타당성",
+      "aspect_code": "clinical",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleGender"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "4194652",
+        "gender": "Female"
+      },
+      "query": "condition_occurrence의 condition_concept_id을(를) 임상 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G126",
+      "table": "person",
+      "column": "race_concept_id",
+      "aspect": "표준 개념",
+      "aspect_code": "standard",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isStandardValidConcept"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "person의 race_concept_id을(를) 표준 개념 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G127",
+      "table": "procedure_occurrence",
+      "column": "modifier_concept_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "isForeignKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "ref_table": "concept",
+        "ref_field": "concept_id",
+        "col_type": "integer"
+      },
+      "query": "procedure_occurrence의 modifier_concept_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G128",
+      "table": "procedure_occurrence",
+      "column": "procedure_type_concept_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isRequired"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "procedure_occurrence의 procedure_type_concept_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G129",
+      "table": "condition_occurrence",
+      "column": "condition_end_date",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "condition_occurrence의 condition_end_date을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G130",
+      "table": "measurement",
+      "column": "measurement_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isPrimaryKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "measurement의 measurement_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G131",
+      "table": "person",
+      "column": "person_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isPrimaryKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "person의 person_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G132",
+      "table": "person",
+      "column": "race_source_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "person의 race_source_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G133",
+      "table": "procedure_occurrence",
+      "column": "procedure_source_concept_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "isForeignKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "ref_table": "concept",
+        "ref_field": "concept_id",
+        "col_type": "integer"
+      },
+      "query": "procedure_occurrence의 procedure_source_concept_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G134",
+      "table": "visit_occurrence",
+      "column": "visit_type_concept_id",
+      "aspect": "표준 개념",
+      "aspect_code": "standard",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isStandardValidConcept"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "visit_occurrence의 visit_type_concept_id을(를) 표준 개념 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G135",
+      "table": "measurement",
+      "column": "measurement_concept_id",
+      "aspect": "임상 타당성",
+      "aspect_code": "clinical",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "ST_MF",
+      "expected_checks": [
+        "plausibleUnitConceptIds"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "4313591",
+        "unit_concept_ids": "8483,8541"
+      },
+      "query": "measurement의 measurement_concept_id을(를) 임상 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G136",
+      "table": "condition_occurrence",
+      "column": "condition_end_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleDuringLife"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "condition_occurrence의 condition_end_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G137",
+      "table": "observation",
+      "column": "observation_source_value",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "sourceValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "varchar(50)"
+      },
+      "query": "observation의 observation_source_value을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G138",
+      "table": "observation",
+      "column": "observation_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleAfterBirth"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "observation의 observation_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G139",
+      "table": "observation_period",
+      "column": "observation_period_start_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleBeforeDeath"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "observation_period의 observation_period_start_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G140",
+      "table": "procedure_occurrence",
+      "column": "procedure_occurrence_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isPrimaryKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "procedure_occurrence의 procedure_occurrence_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G141",
+      "table": "observation",
+      "column": "observation_type_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "standardConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "observation의 observation_type_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G142",
+      "table": "measurement",
+      "column": "measurement_concept_id",
+      "aspect": "임상 타당성",
+      "aspect_code": "clinical",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "ST_MF",
+      "expected_checks": [
+        "plausibleUnitConceptIds"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "3002109",
+        "unit_concept_ids": "8523,8596,8606,-1"
+      },
+      "query": "measurement의 measurement_concept_id을(를) 임상 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G143",
+      "table": "person",
+      "column": "ethnicity_source_value",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "sourceValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "varchar(50)"
+      },
+      "query": "person의 ethnicity_source_value을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G144",
+      "table": "measurement",
+      "column": "measurement_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "measurement의 measurement_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G145",
+      "table": "condition_occurrence",
+      "column": "condition_occurrence_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isRequired"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "bigint"
+      },
+      "query": "condition_occurrence의 condition_occurrence_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G146",
+      "table": "procedure_occurrence",
+      "column": "modifier_concept_id",
+      "aspect": "표준 개념",
+      "aspect_code": "standard",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isStandardValidConcept"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "procedure_occurrence의 modifier_concept_id을(를) 표준 개념 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G147",
+      "table": "measurement",
+      "column": "measurement_concept_id",
+      "aspect": "임상 타당성",
+      "aspect_code": "clinical",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "ST_MF",
+      "expected_checks": [
+        "plausibleUnitConceptIds"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "3027970",
+        "unit_concept_ids": "8636,8713,8950"
+      },
+      "query": "measurement의 measurement_concept_id을(를) 임상 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G148",
+      "table": "drug_exposure",
+      "column": "drug_source_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "sourceConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "drug_exposure의 drug_source_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G149",
+      "table": "procedure_occurrence",
+      "column": "procedure_date",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isRequired"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "procedure_occurrence의 procedure_date을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G150",
+      "table": "measurement",
+      "column": "measurement_source_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "measurement의 measurement_source_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G151",
+      "table": "drug_exposure",
+      "column": "drug_exposure_end_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "ST_MF",
+      "expected_checks": [
+        "plausibleTemporalAfter"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "pair_field": "drug_exposure_start_date",
+        "ref_table": "drug_exposure",
+        "col_type": "date"
+      },
+      "query": "drug_exposure의 drug_exposure_end_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G152",
+      "table": "person",
+      "column": "year_of_birth",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isRequired"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "person의 year_of_birth을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G153",
+      "table": "person",
+      "column": "location_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "person의 location_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G154",
+      "table": "death",
+      "column": "death_type_concept_id",
+      "aspect": "표준 개념",
+      "aspect_code": "standard",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isStandardValidConcept"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "death의 death_type_concept_id을(를) 표준 개념 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G155",
+      "table": "visit_occurrence",
+      "column": "visit_end_date",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isRequired"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "visit_occurrence의 visit_end_date을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G156",
+      "table": "drug_exposure",
+      "column": "drug_type_concept_id",
+      "aspect": "표준 개념",
+      "aspect_code": "standard",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isStandardValidConcept"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "drug_exposure의 drug_type_concept_id을(를) 표준 개념 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G157",
+      "table": "measurement",
+      "column": "measurement_source_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "sourceConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "measurement의 measurement_source_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G158",
+      "table": "drug_exposure",
+      "column": "visit_occurrence_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "isForeignKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "ref_table": "visit_occurrence",
+        "ref_field": "visit_occurrence_id",
+        "col_type": "integer"
+      },
+      "query": "drug_exposure의 visit_occurrence_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G159",
+      "table": "drug_exposure",
+      "column": "quantity",
+      "aspect": "값 범위",
+      "aspect_code": "value_range",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "plausibleValueLow"
+      ],
+      "threshold": "0.0000001",
+      "gold_params": {
+        "threshold_value": "0.0000001",
+        "col_type": "float"
+      },
+      "query": "drug_exposure의 quantity을(를) 값 범위 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G160",
+      "table": "condition_occurrence",
+      "column": "condition_end_date",
+      "aspect": "값 범위",
+      "aspect_code": "value_range",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "plausibleValueLow"
+      ],
+      "threshold": "TO_DATE('1950-01-01', 'YYYY-MM-DD')",
+      "gold_params": {
+        "threshold_value": "TO_DATE('1950-01-01', 'YYYY-MM-DD')",
+        "col_type": "date"
+      },
+      "query": "condition_occurrence의 condition_end_date을(를) 값 범위 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G161",
+      "table": "drug_exposure",
+      "column": "drug_exposure_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isPrimaryKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "bigint"
+      },
+      "query": "drug_exposure의 drug_exposure_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G162",
+      "table": "visit_occurrence",
+      "column": "visit_end_date",
+      "aspect": "값 범위",
+      "aspect_code": "value_range",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "plausibleValueHigh"
+      ],
+      "threshold": "SYSDATE + 1",
+      "gold_params": {
+        "threshold_value": "SYSDATE + 1",
+        "col_type": "date"
+      },
+      "query": "visit_occurrence의 visit_end_date을(를) 값 범위 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G163",
+      "table": "procedure_occurrence",
+      "column": "person_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "procedure_occurrence의 person_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G164",
+      "table": "condition_occurrence",
+      "column": "condition_start_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleDuringLife"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "condition_occurrence의 condition_start_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G165",
+      "table": "observation",
+      "column": "qualifier_concept_id",
+      "aspect": "표준 개념",
+      "aspect_code": "standard",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isStandardValidConcept"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "observation의 qualifier_concept_id을(를) 표준 개념 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G166",
+      "table": "drug_exposure",
+      "column": "drug_exposure_end_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleDuringLife"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "drug_exposure의 drug_exposure_end_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G167",
+      "table": "death",
+      "column": "death_type_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "standardConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "death의 death_type_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G168",
+      "table": "death",
+      "column": "cause_source_value",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "sourceValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "varchar(50)"
+      },
+      "query": "death의 cause_source_value을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G169",
+      "table": "observation",
+      "column": "observation_type_concept_id",
+      "aspect": "표준 개념",
+      "aspect_code": "standard",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isStandardValidConcept"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "observation의 observation_type_concept_id을(를) 표준 개념 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G170",
+      "table": "person",
+      "column": "day_of_birth",
+      "aspect": "값 범위",
+      "aspect_code": "value_range",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "plausibleValueHigh"
+      ],
+      "threshold": "31",
+      "gold_params": {
+        "threshold_value": "31",
+        "col_type": "integer"
+      },
+      "query": "person의 day_of_birth을(를) 값 범위 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G171",
+      "table": "observation",
+      "column": "observation_type_concept_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isRequired"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "observation의 observation_type_concept_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G172",
+      "table": "observation",
+      "column": "observation_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "standardConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "observation의 observation_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G173",
+      "table": "condition_occurrence",
+      "column": "condition_type_concept_id",
+      "aspect": "표준 개념",
+      "aspect_code": "standard",
+      "dimension": "Conformance",
+      "subcategory": "Value",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isStandardValidConcept"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "condition_occurrence의 condition_type_concept_id을(를) 표준 개념 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G174",
+      "table": "measurement",
+      "column": "measurement_concept_id",
+      "aspect": "임상 타당성",
+      "aspect_code": "clinical",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "ST_MF",
+      "expected_checks": [
+        "plausibleUnitConceptIds"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "3004249",
+        "unit_concept_ids": "8876"
+      },
+      "query": "measurement의 measurement_concept_id을(를) 임상 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G175",
+      "table": "condition_occurrence",
+      "column": "condition_concept_id",
+      "aspect": "임상 타당성",
+      "aspect_code": "clinical",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleGenderUseDescendants"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "4095793 , 443343, 4024004 , 4172857, 444094 , 197810, 4158481",
+        "gender": "Female"
+      },
+      "query": "condition_occurrence의 condition_concept_id을(를) 임상 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G176",
+      "table": "person",
+      "column": "race_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "standardConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "person의 race_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G177",
+      "table": "visit_occurrence",
+      "column": "visit_start_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "ST_MF",
+      "expected_checks": [
+        "plausibleStartBeforeEnd"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "pair_field": "visit_end_date",
+        "col_type": "date"
+      },
+      "query": "visit_occurrence의 visit_start_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G178",
+      "table": "observation_period",
+      "column": "observation_period_end_date",
+      "aspect": "값 범위",
+      "aspect_code": "value_range",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "plausibleValueHigh"
+      ],
+      "threshold": "SYSDATE + 1",
+      "gold_params": {
+        "threshold_value": "SYSDATE + 1",
+        "col_type": "date"
+      },
+      "query": "observation_period의 observation_period_end_date을(를) 값 범위 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G179",
+      "table": "observation_period",
+      "column": "observation_period_start_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "ST_MF",
+      "expected_checks": [
+        "plausibleStartBeforeEnd"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "pair_field": "observation_period_end_date",
+        "col_type": "date"
+      },
+      "query": "observation_period의 observation_period_start_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G180",
+      "table": "procedure_occurrence",
+      "column": "procedure_occurrence_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isRequired"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "procedure_occurrence의 procedure_occurrence_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G181",
+      "table": "person",
+      "column": "person_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "person의 person_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G182",
+      "table": "measurement",
+      "column": "unit_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "measurement의 unit_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G183",
+      "table": "drug_exposure",
+      "column": "drug_exposure_end_date",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "drug_exposure의 drug_exposure_end_date을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G184",
+      "table": "observation",
+      "column": "qualifier_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "observation의 qualifier_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G185",
+      "table": "procedure_occurrence",
+      "column": "procedure_source_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "sourceConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "procedure_occurrence의 procedure_source_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G186",
+      "table": "condition_occurrence",
+      "column": "condition_type_concept_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isRequired"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "condition_occurrence의 condition_type_concept_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G187",
+      "table": "procedure_occurrence",
+      "column": "procedure_date",
+      "aspect": "값 범위",
+      "aspect_code": "value_range",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "plausibleValueLow"
+      ],
+      "threshold": "TO_DATE('1950-01-01', 'YYYY-MM-DD')",
+      "gold_params": {
+        "threshold_value": "TO_DATE('1950-01-01', 'YYYY-MM-DD')",
+        "col_type": "date"
+      },
+      "query": "procedure_occurrence의 procedure_date을(를) 값 범위 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G188",
+      "table": "procedure_occurrence",
+      "column": "modifier_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "standardConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "procedure_occurrence의 modifier_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G189",
+      "table": "drug_exposure",
+      "column": "days_supply",
+      "aspect": "값 범위",
+      "aspect_code": "value_range",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "plausibleValueHigh"
+      ],
+      "threshold": "365",
+      "gold_params": {
+        "threshold_value": "365",
+        "col_type": "integer"
+      },
+      "query": "drug_exposure의 days_supply을(를) 값 범위 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G190",
+      "table": "visit_occurrence",
+      "column": "visit_end_date",
+      "aspect": "값 범위",
+      "aspect_code": "value_range",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "plausibleValueLow"
+      ],
+      "threshold": "TO_DATE('1950-01-01', 'YYYY-MM-DD')",
+      "gold_params": {
+        "threshold_value": "TO_DATE('1950-01-01', 'YYYY-MM-DD')",
+        "col_type": "date"
+      },
+      "query": "visit_occurrence의 visit_end_date을(를) 값 범위 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G191",
+      "table": "procedure_occurrence",
+      "column": "procedure_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "standardConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "procedure_occurrence의 procedure_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G192",
+      "table": "procedure_occurrence",
+      "column": "procedure_date",
+      "aspect": "시간 타당성",
+      "aspect_code": "temporal",
+      "dimension": "Plausibility",
+      "subcategory": "Temporal",
+      "complexity": "MT_MF",
+      "expected_checks": [
+        "plausibleAfterBirth"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "procedure_occurrence의 procedure_date을(를) 시간 타당성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G193",
+      "table": "drug_exposure",
+      "column": "drug_source_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "drug_exposure의 drug_source_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G194",
+      "table": "drug_exposure",
+      "column": "drug_exposure_start_date",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "drug_exposure의 drug_exposure_start_date을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G195",
+      "table": "observation_period",
+      "column": "observation_period_start_date",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "measureValueCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "date"
+      },
+      "query": "observation_period의 observation_period_start_date을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G196",
+      "table": "visit_occurrence",
+      "column": "visit_occurrence_id",
+      "aspect": "필수·참조 무결성",
+      "aspect_code": "referential",
+      "dimension": "Conformance",
+      "subcategory": "Relational",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "isPrimaryKey"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "visit_occurrence의 visit_occurrence_id을(를) 필수·참조 무결성 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G197",
+      "table": "drug_exposure",
+      "column": "drug_exposure_end_date",
+      "aspect": "값 범위",
+      "aspect_code": "value_range",
+      "dimension": "Plausibility",
+      "subcategory": "Atemporal",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "plausibleValueHigh"
+      ],
+      "threshold": "SYSDATE + 1",
+      "gold_params": {
+        "threshold_value": "SYSDATE + 1",
+        "col_type": "date"
+      },
+      "query": "drug_exposure의 drug_exposure_end_date을(를) 값 범위 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G198",
+      "table": "person",
+      "column": "gender_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "standardConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "person의 gender_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G199",
+      "table": "observation",
+      "column": "observation_source_concept_id",
+      "aspect": "결측",
+      "aspect_code": "missing",
+      "dimension": "Completeness",
+      "subcategory": "",
+      "complexity": "ST_SF",
+      "expected_checks": [
+        "sourceConceptRecordCompleteness"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer"
+      },
+      "query": "observation의 observation_source_concept_id을(를) 결측 관점으로 평가하는 지표 만들어줘"
+    },
+    {
+      "id": "G200",
+      "table": "measurement",
+      "column": "measurement_concept_id",
+      "aspect": "임상 타당성",
+      "aspect_code": "clinical",
+      "dimension": "Plausibility",
+      "subcategory": "Clinical",
+      "complexity": "ST_MF",
+      "expected_checks": [
+        "plausibleUnitConceptIds"
+      ],
+      "threshold": null,
+      "gold_params": {
+        "col_type": "integer",
+        "concept_id": "3013721",
+        "unit_concept_ids": "8645,8923"
+      },
+      "query": "measurement의 measurement_concept_id을(를) 임상 타당성 관점으로 평가하는 지표 만들어줘"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+[project]
+name = "cliniq-agent"
+version = "0.1.0"
+description = "OMOP CDM v5.3 데이터 품질 규칙 생성 에이전트 (LLM-DQR 기반)"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.7",
+    "openai>=1.60",          # vLLM OpenAI 호환 클라이언트
+    "chromadb>=1.0",         # RAG 벡터스토어
+    "sqlglot>=25.0",         # Oracle SQL 정적검사
+    "sentence-transformers>=3.0",  # bge-m3 임베딩
+    "langgraph>=0.2",        # creative 파이프라인 state machine
+    "oracledb>=2.0",         # Oracle 연결 (thin 모드 — Instant Client 불필요)
+    "python-dotenv>=1.2.2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[tool.uv]
+# torch가 sentence-transformers 의존성으로 설치됨 — GPU 서버 기준 기본 인덱스 사용

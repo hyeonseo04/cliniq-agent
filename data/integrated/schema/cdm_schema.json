@@ -1,0 +1,3529 @@
+{
+  "person": {
+    "schema": {
+      "table_name": "person",
+      "table_description": "This table serves as the central identity management for all Persons in the database. It contains records that uniquely identify each person or patient, and some demographic information.",
+      "fields": [
+        {
+          "name": "person_id",
+          "type": "integer",
+          "description": "It is assumed that every person with a different unique identifier is in fact a different person and should be treated independently.",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "gender_concept_id",
+          "type": "integer",
+          "description": "This field is meant to capture the biological sex at birth of the Person. This field should not be used to study gender identity issues.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Gender"
+          }
+        },
+        {
+          "name": "year_of_birth",
+          "type": "integer",
+          "description": "Compute age using year_of_birth.",
+          "nullable": "No"
+        },
+        {
+          "name": "month_of_birth",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "day_of_birth",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "birth_datetime",
+          "type": "datetime",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "race_concept_id",
+          "type": "integer",
+          "description": "This field captures race or ethnic background of the person.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Race"
+          }
+        },
+        {
+          "name": "ethnicity_concept_id",
+          "type": "integer",
+          "description": "This field captures Ethnicity as defined by the Office of Management and Budget (OMB) of the US Government: it distinguishes only between \\Hispanic\\ and \\Not Hispanic\\. Races and ethnic backgrounds are not stored here.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Ethnicity"
+          }
+        },
+        {
+          "name": "location_id",
+          "type": "integer",
+          "description": "The location refers to the physical address of the person. This field should capture the last known location of the person.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "location",
+            "reference_field": "location_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "provider_id",
+          "type": "integer",
+          "description": "The Provider refers to the last known primary care provider (General Practitioner).",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "provider",
+            "reference_field": "provider_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "care_site_id",
+          "type": "integer",
+          "description": "The Care Site refers to where the Provider typically provides the primary care.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "care_site",
+            "reference_field": "care_site_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "person_source_value",
+          "type": "varchar(50)",
+          "description": "Use this field to link back to persons in the source data. This is typically used for error checking of ETL logic.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "gender_source_value",
+          "type": "varchar(50)",
+          "description": "This field is used to store the biological sex of the person from the source data. It is not intended for use in standard analytics but for reference only.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "gender_source_concept_id",
+          "type": "integer",
+          "description": "Due to the small number of options, this tends to be zero.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "race_source_value",
+          "type": "varchar(50)",
+          "description": "This field is used to store the race of the person from the source data. It is not intended for use in standard analytics but for reference only.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "race_source_concept_id",
+          "type": "integer",
+          "description": "Due to the small number of options, this tends to be zero.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "ethnicity_source_value",
+          "type": "varchar(50)",
+          "description": "This field is used to store the ethnicity of the person from the source data. It is not intended for use in standard analytics but for reference only.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "ethnicity_source_concept_id",
+          "type": "integer",
+          "description": "Due to the small number of options, this tends to be zero.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        }
+      ]
+    }
+  },
+  "observation_period": {
+    "schema": {
+      "table_name": "observation_period",
+      "table_description": "This table contains records which define spans of time during which two conditions are expected to hold: (i) Clinical Events that happened to the Person are recorded in the Event tables, and (ii) absence of records indicate such Events did not occur during this span of time.",
+      "fields": [
+        {
+          "name": "observation_period_id",
+          "type": "integer",
+          "description": "A Person can have multiple discrete Observation Periods which are identified by the Observation_Period_Id.",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "person_id",
+          "type": "integer",
+          "description": "The Person ID of the PERSON record for which the Observation Period is recorded.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "person",
+            "reference_field": "person_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "observation_period_start_date",
+          "type": "date",
+          "description": "Use this date to determine the start date of the Observation Period.",
+          "nullable": "No"
+        },
+        {
+          "name": "observation_period_end_date",
+          "type": "date",
+          "description": "Use this date to determine the end date of the period for which we can assume that all events for a Person are recorded.",
+          "nullable": "No"
+        },
+        {
+          "name": "period_type_concept_id",
+          "type": "integer",
+          "description": "This field can be used to determine the provenance of the Observation Period as in whether the period was determined from an insurance enrollment file, EHR healthcare encounters, or other sources.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Type Concept"
+          }
+        }
+      ]
+    }
+  },
+  "visit_occurrence": {
+    "schema": {
+      "table_name": "visit_occurrence",
+      "table_description": "This table contains Events where Persons engage with the healthcare system for a duration of time. They are often also called \"Encounters\". Visits are defined by a configuration of circumstances under which they occur, such as (i) whether the patient comes to a healthcare institution, the other way around, or the interaction is remote, (ii) whether and what kind of trained medical staff is delivering the service during the Visit, and (iii) whether the Visit is transient or for a longer period involving a stay in bed.",
+      "fields": [
+        {
+          "name": "visit_occurrence_id",
+          "type": "integer",
+          "description": "Use this to identify unique interactions between a person and the health care system. This identifier links across the other CDM event tables to associate events with a visit.",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "person_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "person",
+            "reference_field": "person_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "visit_concept_id",
+          "type": "integer",
+          "description": "This field contains a concept id representing the kind of visit, like inpatient or outpatient. All concepts in this field should be standard and belong to the Visit domain.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Visit"
+          }
+        },
+        {
+          "name": "visit_start_date",
+          "type": "date",
+          "description": "For inpatient visits, the start date is typically the admission date. For outpatient visits the start date and end date will be the same.",
+          "nullable": "No"
+        },
+        {
+          "name": "visit_start_datetime",
+          "type": "datetime",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "visit_end_date",
+          "type": "date",
+          "description": "For inpatient visits the end date is typically the discharge date.  If a Person is still an inpatient in the hospital at the time of the data extract and does not have a visit_end_date, then set the visit_end_date to the date of the data pull.",
+          "nullable": "No"
+        },
+        {
+          "name": "visit_end_datetime",
+          "type": "datetime",
+          "description": "If a Person is still an inpatient in the hospital at the time of the data extract and does not have a visit_end_datetime, then set the visit_end_datetime to the datetime of the data pull.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "visit_type_concept_id",
+          "type": "integer",
+          "description": "Use this field to understand the provenance of the visit record, or where the record comes from.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Type Concept"
+          }
+        },
+        {
+          "name": "provider_id",
+          "type": "integer",
+          "description": "There will only be one provider per visit record and the ETL document should clearly state how they were chosen (attending, admitting, etc.). If there are multiple providers associated with a visit in the source, this can be reflected in the event tables (CONDITION_OCCURRENCE, PROCEDURE_OCCURRENCE, etc.) or in the VISIT_DETAIL table.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "provider",
+            "reference_field": "provider_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "care_site_id",
+          "type": "integer",
+          "description": "This field provides information about the Care Site where the Visit took place.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "care_site",
+            "reference_field": "care_site_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "visit_source_value",
+          "type": "varchar(50)",
+          "description": "This field houses the verbatim value from the source data representing the kind of visit that took place (inpatient, outpatient, emergency, etc.)",
+          "nullable": "Yes"
+        },
+        {
+          "name": "visit_source_concept_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "admitting_source_concept_id",
+          "type": "integer",
+          "description": "Use this field to determine where the patient was admitted from. This concept is part of the visit domain and can indicate if a patient was admitted to the hospital from a long-term care facility, for example.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Visit"
+          }
+        },
+        {
+          "name": "admitting_source_value",
+          "type": "varchar(50)",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "discharge_to_concept_id",
+          "type": "integer",
+          "description": "Use this field to determine where the patient was discharged to after a visit. This concept is part of the visit domain and can indicate if a patient was discharged to home or sent to a long-term care facility, for example.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Visit"
+          }
+        },
+        {
+          "name": "discharge_to_source_value",
+          "type": "varchar(50)",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "preceding_visit_occurrence_id",
+          "type": "integer",
+          "description": "Use this field to find the visit that occurred for the person prior to the given visit. There could be a few days or a few years in between.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "visit_occurrence",
+            "reference_field": "visit_occurrence_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        }
+      ]
+    }
+  },
+  "visit_detail": {
+    "schema": {
+      "table_name": "visit_detail",
+      "table_description": "The VISIT_DETAIL table is an optional table used to represents details of each record in the parent VISIT_OCCURRENCE table. A good example of this would be the movement between units in a hospital during an inpatient stay or claim lines associated with a one insurance claim. For every record in the VISIT_OCCURRENCE table there may be 0 or more records in the VISIT_DETAIL table with a 1:n relationship where n may be 0. The VISIT_DETAIL table is structurally very similar to VISIT_OCCURRENCE table and belongs to the visit domain.",
+      "fields": [
+        {
+          "name": "visit_detail_id",
+          "type": "integer",
+          "description": "Use this to identify unique interactions between a person and the health care system. This identifier links across the other CDM event tables to associate events with a visit detail.",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "person_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "person",
+            "reference_field": "person_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "visit_detail_concept_id",
+          "type": "integer",
+          "description": "This field contains a concept id representing the kind of visit detail, like inpatient or outpatient. All concepts in this field should be standard and belong to the Visit domain.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Visit"
+          }
+        },
+        {
+          "name": "visit_detail_start_date",
+          "type": "date",
+          "description": "This is the date of the start of the encounter. This may or may not be equal to the date of the Visit the Visit Detail is associated with.",
+          "nullable": "No"
+        },
+        {
+          "name": "visit_detail_start_datetime",
+          "type": "datetime",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "visit_detail_end_date",
+          "type": "date",
+          "description": "This the end date of the patient-provider interaction.  If a Person is still an inpatient in the hospital at the time of the data extract and does not have a visit_end_date, then set the visit_end_date to the date of the data pull.",
+          "nullable": "No"
+        },
+        {
+          "name": "visit_detail_end_datetime",
+          "type": "datetime",
+          "description": "If a Person is still an inpatient in the hospital at the time of the data extract and does not have a visit_end_datetime, then set the visit_end_datetime to the datetime of the data pull.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "visit_detail_type_concept_id",
+          "type": "integer",
+          "description": "Use this field to understand the provenance of the visit detail record, or where the record comes from.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Type Concept"
+          }
+        },
+        {
+          "name": "provider_id",
+          "type": "integer",
+          "description": "There will only be one provider per  **visit** record and the ETL document should clearly state how they were chosen (attending, admitting, etc.). This is a typical reason for leveraging the VISIT_DETAIL table as even though each VISIT_DETAIL record can only have one provider, there is no limit to the number of VISIT_DETAIL records that can be associated to a VISIT_OCCURRENCE record.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "provider",
+            "reference_field": "provider_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "care_site_id",
+          "type": "integer",
+          "description": "This field provides information about the Care Site where the Visit Detail took place.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "care_site",
+            "reference_field": "care_site_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "visit_detail_source_value",
+          "type": "varchar(50)",
+          "description": "This field houses the verbatim value from the source data representing the kind of visit detail that took place (inpatient, outpatient, emergency, etc.)",
+          "nullable": "Yes"
+        },
+        {
+          "name": "visit_detail_source_concept_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "admitting_source_value",
+          "type": "varchar(50)",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "admitting_source_concept_id",
+          "type": "integer",
+          "description": "Use this field to determine where the patient was admitted from. This concept is part of the visit domain and can indicate if a patient was admitted to the hospital from a long-term care facility, for example.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Visit"
+          }
+        },
+        {
+          "name": "discharge_to_source_value",
+          "type": "varchar(50)",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "discharge_to_concept_id",
+          "type": "integer",
+          "description": "Use this field to determine where the patient was discharged to after a visit detail record. This concept is part of the visit domain and can indicate if a patient was discharged to home or sent to a long-term care facility, for example.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Visit"
+          }
+        },
+        {
+          "name": "preceding_visit_detail_id",
+          "type": "integer",
+          "description": "Use this field to find the visit detail that occurred for the person prior to the given visit detail record. There could be a few days or a few years in between.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "visit_detail",
+            "reference_field": "visit_detail_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "visit_detail_parent_id",
+          "type": "integer",
+          "description": "Use this field to find the visit detail that subsumes the given visit detail record. This is used in the case that a visit detail record needs to be nested beyond the VISIT_OCCURRENCE/VISIT_DETAIL relationship.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "visit_detail",
+            "reference_field": "visit_detail_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "visit_occurrence_id",
+          "type": "integer",
+          "description": "Use this field to link the VISIT_DETAIL record to its VISIT_OCCURRENCE.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "visit_occurrence",
+            "reference_field": "visit_occurrence_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        }
+      ]
+    }
+  },
+  "condition_occurrence": {
+    "schema": {
+      "table_name": "condition_occurrence",
+      "table_description": "This table contains records of Events of a Person suggesting the presence of a disease or medical condition stated as a diagnosis, a sign, or a symptom, which is either observed by a Provider or reported by the patient.",
+      "fields": [
+        {
+          "name": "condition_occurrence_id",
+          "type": "integer",
+          "description": "The unique key given to a condition record for a person. Refer to the ETL for how duplicate conditions during the same visit were handled.",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "person_id",
+          "type": "integer",
+          "description": "The PERSON_ID of the PERSON for whom the condition is recorded.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "person",
+            "reference_field": "person_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "condition_concept_id",
+          "type": "integer",
+          "description": "The CONDITION_CONCEPT_ID field is recommended for primary use in analyses, and must be used for network studies. This is the standard concept mapped from the source value which represents a condition",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Condition"
+          }
+        },
+        {
+          "name": "condition_start_date",
+          "type": "date",
+          "description": "Use this date to determine the start date of the condition",
+          "nullable": "No"
+        },
+        {
+          "name": "condition_start_datetime",
+          "type": "datetime",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "condition_end_date",
+          "type": "date",
+          "description": "Use this date to determine the end date of the condition",
+          "nullable": "Yes"
+        },
+        {
+          "name": "condition_end_datetime",
+          "type": "datetime",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "condition_type_concept_id",
+          "type": "integer",
+          "description": "This field can be used to determine the provenance of the Condition record, as in whether the condition was from an EHR system, insurance claim, registry, or other sources.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Type Concept"
+          }
+        },
+        {
+          "name": "condition_status_concept_id",
+          "type": "integer",
+          "description": "This concept represents the point during the visit the diagnosis was given (admitting diagnosis, final diagnosis), whether the diagnosis was determined due to laboratory findings, if the diagnosis was exclusionary, or if it was a preliminary diagnosis, among others.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Condition Status"
+          }
+        },
+        {
+          "name": "stop_reason",
+          "type": "varchar(20)",
+          "description": "The Stop Reason indicates why a Condition is no longer valid with respect to the purpose within the source data. Note that a Stop Reason does not necessarily imply that the condition is no longer occurring.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "provider_id",
+          "type": "integer",
+          "description": "The provider associated with condition record, e.g. the provider who made the diagnosis or the provider who recorded the symptom.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "provider",
+            "reference_field": "provider_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "visit_occurrence_id",
+          "type": "integer",
+          "description": "The visit during which the condition occurred.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "visit_occurrence",
+            "reference_field": "visit_occurrence_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "visit_detail_id",
+          "type": "integer",
+          "description": "The VISIT_DETAIL record during which the condition occurred. For example, if the person was in the ICU at the time of the diagnosis the VISIT_OCCURRENCE record would reflect the overall hospital stay and the VISIT_DETAIL record would reflect the ICU stay during the hospital visit.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "visit_detail",
+            "reference_field": "visit_detail_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "condition_source_value",
+          "type": "varchar(50)",
+          "description": "This field houses the verbatim value from the source data representing the condition that occurred. For example, this could be an ICD10 or Read code.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "condition_source_concept_id",
+          "type": "integer",
+          "description": "This is the concept representing the condition source value and may not necessarily be standard. This field is discouraged from use in analysis because it is not required to contain Standard Concepts that are used across the OHDSI community, and should only be used when Standard Concepts do not adequately represent the source detail for the Condition necessary for a given analytic use case. Consider using CONDITION_CONCEPT_ID instead to enable standardized analytics that can be consistent across the network.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "condition_status_source_value",
+          "type": "varchar(50)",
+          "description": "This field houses the verbatim value from the source data representing the condition status.",
+          "nullable": "Yes"
+        }
+      ]
+    }
+  },
+  "drug_exposure": {
+    "schema": {
+      "table_name": "drug_exposure",
+      "table_description": "This table captures records about the exposure to a Drug ingested or otherwise introduced into the body. A Drug is a biochemical substance formulated in such a way that when administered to a Person it will exert a certain biochemical effect on the metabolism. Drugs include prescription and over-the-counter medicines, vaccines, and large-molecule biologic therapies. Radiological devices ingested or applied locally do not count as Drugs.",
+      "fields": [
+        {
+          "name": "drug_exposure_id",
+          "type": "integer",
+          "description": "The unique key given to records of drug dispensings or administrations for a person. Refer to the ETL for how duplicate drugs during the same visit were handled.",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "person_id",
+          "type": "integer",
+          "description": "The PERSON_ID of the PERSON for whom the drug dispensing or administration is recorded. This may be a system generated code.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "person",
+            "reference_field": "person_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "drug_concept_id",
+          "type": "integer",
+          "description": "The DRUG_CONCEPT_ID field is recommended for primary use in analyses, and must be used for network studies. This is the standard concept mapped from the source concept id which represents a drug product or molecule otherwise introduced to the body. The drug concepts can have a varying degree of information about drug strength and dose. This information is relevant in the context of quantity and administration information in the subsequent fields plus strength information from the DRUG_STRENGTH table, provided as part of the standard vocabulary download.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Drug"
+          }
+        },
+        {
+          "name": "drug_exposure_start_date",
+          "type": "date",
+          "description": "Use this date to determine the start date of the drug record.",
+          "nullable": "No"
+        },
+        {
+          "name": "drug_exposure_start_datetime",
+          "type": "datetime",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "drug_exposure_end_date",
+          "type": "date",
+          "description": "The DRUG_EXPOSURE_END_DATE denotes the day the drug exposure ended for the patient.",
+          "nullable": "No"
+        },
+        {
+          "name": "drug_exposure_end_datetime",
+          "type": "datetime",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "verbatim_end_date",
+          "type": "date",
+          "description": "This is the end date of the drug exposure as it appears in the source data, if it is given",
+          "nullable": "Yes"
+        },
+        {
+          "name": "drug_type_concept_id",
+          "type": "integer",
+          "description": "You can use the TYPE_CONCEPT_ID to delineate between prescriptions written vs. prescriptions dispensed vs. medication history vs. patient-reported exposure, etc.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Type Concept"
+          }
+        },
+        {
+          "name": "stop_reason",
+          "type": "varchar(20)",
+          "description": "The reason a person stopped a medication as it is represented in the source. Reasons include regimen completed, changed, removed, etc. This field will be retired in v6.0.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "refills",
+          "type": "integer",
+          "description": "This is only filled in when the record is coming from a prescription written this field is meant to represent intended refills at time of the prescription.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "quantity",
+          "type": "float",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "days_supply",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "no",
+            "reference_field": "na",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "sig",
+          "type": "varchar(max)",
+          "description": "This is the verbatim instruction for the drug as written by the provider.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "route_concept_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Route"
+          }
+        },
+        {
+          "name": "lot_number",
+          "type": "varchar(50)",
+          "description": "An identifier assigned to a particular quantity or lot of drug product from the manufacturer.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "provider_id",
+          "type": "integer",
+          "description": "The Provider associated with drug record, e.g. the provider who wrote the prescription or the provider who administered the drug.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "provider",
+            "reference_field": "provider_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "visit_occurrence_id",
+          "type": "integer",
+          "description": "The Visit during which the drug was prescribed, administered or dispensed.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "visit_occurrence",
+            "reference_field": "visit_occurrence_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "visit_detail_id",
+          "type": "integer",
+          "description": "The VISIT_DETAIL record during which the drug exposure occurred. For example, if the person was in the ICU at the time of the drug administration the VISIT_OCCURRENCE record would reflect the overall hospital stay and the VISIT_DETAIL record would reflect the ICU stay during the hospital visit.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "visit_detail",
+            "reference_field": "visit_detail_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "drug_source_value",
+          "type": "varchar(50)",
+          "description": "This field houses the verbatim value from the source data representing the drug exposure that occurred. For example, this could be an NDC or Gemscript code.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "drug_source_concept_id",
+          "type": "integer",
+          "description": "This is the concept representing the drug source value and may not necessarily be standard. This field is discouraged from use in analysis because it is not required to contain Standard Concepts that are used across the OHDSI community, and should only be used when Standard Concepts do not adequately represent the source detail for the Drug necessary for a given analytic use case. Consider using DRUG_CONCEPT_ID instead to enable standardized analytics that can be consistent across the network.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "route_source_value",
+          "type": "varchar(50)",
+          "description": "This field houses the verbatim value from the source data representing the drug route.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "dose_unit_source_value",
+          "type": "varchar(50)",
+          "description": "This field houses the verbatim value from the source data representing the dose unit of the drug given.",
+          "nullable": "Yes"
+        }
+      ]
+    }
+  },
+  "na": {
+    "schema": {
+      "table_name": "na",
+      "table_description": "",
+      "fields": [
+        {
+          "name": "",
+          "type": "",
+          "description": "",
+          "nullable": "Yes"
+        }
+      ]
+    }
+  },
+  "procedure_occurrence": {
+    "schema": {
+      "table_name": "procedure_occurrence",
+      "table_description": "This table contains records of activities or processes ordered by, or carried out by, a healthcare provider on the patient with a diagnostic or therapeutic purpose.",
+      "fields": [
+        {
+          "name": "procedure_occurrence_id",
+          "type": "integer",
+          "description": "The unique key given to a procedure record for a person. Refer to the ETL for how duplicate procedures during the same visit were handled.",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "person_id",
+          "type": "integer",
+          "description": "The PERSON_ID of the PERSON for whom the procedure is recorded. This may be a system generated code.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "person",
+            "reference_field": "person_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "procedure_concept_id",
+          "type": "integer",
+          "description": "The PROCEDURE_CONCEPT_ID field is recommended for primary use in analyses, and must be used for network studies. This is the standard concept mapped from the source value which represents a procedure",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Procedure"
+          }
+        },
+        {
+          "name": "procedure_date",
+          "type": "date",
+          "description": "Use this date to determine the date the procedure started.",
+          "nullable": "No"
+        },
+        {
+          "name": "procedure_datetime",
+          "type": "datetime",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "procedure_type_concept_id",
+          "type": "integer",
+          "description": "This field can be used to determine the provenance of the Procedure record, as in whether the procedure was from an EHR system, insurance claim, registry, or other sources.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Type Concept"
+          }
+        },
+        {
+          "name": "modifier_concept_id",
+          "type": "integer",
+          "description": "The modifiers are intended to give additional information about the procedure but as of now the vocabulary is under review.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "quantity",
+          "type": "integer",
+          "description": "If the quantity value is omitted, a single procedure is assumed.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "provider_id",
+          "type": "integer",
+          "description": "The provider associated with the procedure record, e.g. the provider who performed the Procedure.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "provider",
+            "reference_field": "provider_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "visit_occurrence_id",
+          "type": "integer",
+          "description": "The visit during which the procedure occurred.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "visit_occurrence",
+            "reference_field": "visit_occurrence_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "visit_detail_id",
+          "type": "integer",
+          "description": "The VISIT_DETAIL record during which the Procedure occurred. For example, if the Person was in the ICU at the time of the Procedure the VISIT_OCCURRENCE record would reflect the overall hospital stay and the VISIT_DETAIL record would reflect the ICU stay during the hospital visit.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "visit_detail",
+            "reference_field": "visit_detail_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "procedure_source_value",
+          "type": "varchar(50)",
+          "description": "This field houses the verbatim value from the source data representing the procedure that occurred. For example, this could be an CPT4 or OPCS4 code.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "procedure_source_concept_id",
+          "type": "integer",
+          "description": "This is the concept representing the procedure source value and may not necessarily be standard. This field is discouraged from use in analysis because it is not required to contain Standard Concepts that are used across the OHDSI community, and should only be used when Standard Concepts do not adequately represent the source detail for the Procedure necessary for a given analytic use case. Consider using PROCEDURE_CONCEPT_ID instead to enable standardized analytics that can be consistent across the network.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "modifier_source_value",
+          "type": "varchar(50)",
+          "description": "This field houses the verbatim value from the source data representing the modifier code for the procedure that occurred.",
+          "nullable": "Yes"
+        }
+      ]
+    }
+  },
+  "device_exposure": {
+    "schema": {
+      "table_name": "device_exposure",
+      "table_description": "The Device domain captures information about a person's exposure to a foreign physical object or instrument which is used for diagnostic or therapeutic purposes through a mechanism beyond chemical action. Devices include implantable objects (e.g. pacemakers, stents, artificial joints), medical equipment and supplies (e.g. bandages, crutches, syringes), other instruments used in medical procedures (e.g. sutures, defibrillators) and material used in clinical care (e.g. adhesives, body material, dental material, surgical material).",
+      "fields": [
+        {
+          "name": "device_exposure_id",
+          "type": "integer",
+          "description": "The unique key given to records a person's exposure to a foreign physical object or instrument.",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "person_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "person",
+            "reference_field": "person_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "device_concept_id",
+          "type": "integer",
+          "description": "The DEVICE_CONCEPT_ID field is recommended for primary use in analyses, and must be used for network studies. This is the standard concept mapped from the source concept id which represents a foreign object or instrument the person was exposed to.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Device"
+          }
+        },
+        {
+          "name": "device_exposure_start_date",
+          "type": "date",
+          "description": "Use this date to determine the start date of the device record.",
+          "nullable": "No"
+        },
+        {
+          "name": "device_exposure_start_datetime",
+          "type": "datetime",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "device_exposure_end_date",
+          "type": "date",
+          "description": "The DEVICE_EXPOSURE_END_DATE denotes the day the device exposure ended for the patient, if given.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "device_exposure_end_datetime",
+          "type": "datetime",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "device_type_concept_id",
+          "type": "integer",
+          "description": "You can use the TYPE_CONCEPT_ID to denote the provenance of the record, as in whether the record is from administrative claims or EHR.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Type Concept"
+          }
+        },
+        {
+          "name": "unique_device_id",
+          "type": "varchar(50)",
+          "description": "This is the Unique Device Identification (UDI-DI) number for devices regulated by the FDA, if given.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "quantity",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "provider_id",
+          "type": "integer",
+          "description": "The Provider associated with device record, e.g. the provider who wrote the prescription or the provider who implanted the device.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "provider",
+            "reference_field": "provider_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "visit_occurrence_id",
+          "type": "integer",
+          "description": "The Visit during which the device was prescribed or given.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "visit_occurrence",
+            "reference_field": "visit_occurrence_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "visit_detail_id",
+          "type": "integer",
+          "description": "The Visit Detail during which the device was prescribed or given.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "visit_detail",
+            "reference_field": "visit_detail_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "device_source_value",
+          "type": "varchar(50)",
+          "description": "This field houses the verbatim value from the source data representing the device exposure that occurred. For example, this could be an NDC or Gemscript code.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "device_source_concept_id",
+          "type": "integer",
+          "description": "This is the concept representing the device source value and may not necessarily be standard. This field is discouraged from use in analysis because it is not required to contain Standard Concepts that are used across the OHDSI community, and should only be used when Standard Concepts do not adequately represent the source detail for the Device necessary for a given analytic use case. Consider using DEVICE_CONCEPT_ID instead to enable standardized analytics that can be consistent across the network.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        }
+      ]
+    }
+  },
+  "measurement": {
+    "schema": {
+      "table_name": "measurement",
+      "table_description": "The MEASUREMENT table contains records of Measurements, i.e. structured values (numerical or categorical) obtained through systematic and standardized examination or testing of a Person or Person's sample. The MEASUREMENT table contains both orders and results of such Measurements as laboratory tests, vital signs, quantitative findings from pathology reports, etc. Measurements are stored as attribute value pairs, with the attribute as the Measurement Concept and the value representing the result. The value can be a Concept (stored in VALUE_AS_CONCEPT), or a numerical value (VALUE_AS_NUMBER) with a Unit (UNIT_CONCEPT_ID). The Procedure for obtaining the sample is housed in the PROCEDURE_OCCURRENCE table, though it is unnecessary to create a PROCEDURE_OCCURRENCE record for each measurement if one does not exist in the source data. Measurements differ from Observations in that they require a standardized test or some other activity to generate a quantitative or qualitative result. If there is no result, it is assumed that the lab test was conducted but the result was not captured.",
+      "fields": [
+        {
+          "name": "measurement_id",
+          "type": "integer",
+          "description": "The unique key given to a Measurement record for a Person. Refer to the ETL for how duplicate Measurements during the same Visit were handled.",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "person_id",
+          "type": "integer",
+          "description": "The PERSON_ID of the Person for whom the Measurement is recorded. This may be a system generated code.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "person",
+            "reference_field": "person_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "measurement_concept_id",
+          "type": "integer",
+          "description": "The MEASUREMENT_CONCEPT_ID field is recommended for primary use in analyses, and must be used for network studies. This is the standard concept mapped from the source value which represents a measurement.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Measurement"
+          }
+        },
+        {
+          "name": "measurement_date",
+          "type": "date",
+          "description": "Use this date to determine the date of the measurement.",
+          "nullable": "No"
+        },
+        {
+          "name": "measurement_datetime",
+          "type": "datetime",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "measurement_time",
+          "type": "varchar(10)",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "measurement_type_concept_id",
+          "type": "integer",
+          "description": "This field can be used to determine the provenance of the Measurement record, as in whether the measurement was from an EHR system, insurance claim, registry, or other sources.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Type Concept"
+          }
+        },
+        {
+          "name": "operator_concept_id",
+          "type": "integer",
+          "description": "The meaning of Concept [4172703](https://athena.ohdsi.org/search-terms/terms/4172703) for '=' is identical to omission of a OPERATOR_CONCEPT_ID value. Since the use of this field is rare, it's important when devising analyses to not to forget testing for the content of this field for values different from =.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "value_as_number",
+          "type": "float",
+          "description": "This is the numerical value of the Result of the Measurement, if available. Note that measurements such as blood pressures will be split into their component parts i.e. one record for systolic, one record for diastolic.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "value_as_concept_id",
+          "type": "integer",
+          "description": "If the raw data gives a categorial result for measurements those values are captured and mapped to standard concepts. This can be done manually or using the \\Maps to value\\ relationship in the vocabulary.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "unit_concept_id",
+          "type": "integer",
+          "description": "At present, there isn't a prescribed unit for individual measurements, such as Hemoglobin A1C, meaning it's not obligatory to express these measurements as a percentage. UNIT_SOURCE_VALUES should be linked to a Standard Concept within the Unit domain that most accurately reflects the unit provided in the source data.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Unit"
+          }
+        },
+        {
+          "name": "range_low",
+          "type": "float",
+          "description": "Ranges have the same unit as the VALUE_AS_NUMBER. These ranges are provided by the source and should remain NULL if not given.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "range_high",
+          "type": "float",
+          "description": "Ranges have the same unit as the VALUE_AS_NUMBER. These ranges are provided by the source and should remain NULL if not given.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "provider_id",
+          "type": "integer",
+          "description": "The provider associated with measurement record, e.g. the provider who ordered the test or the provider who recorded the result.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "provider",
+            "reference_field": "provider_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "visit_occurrence_id",
+          "type": "integer",
+          "description": "The visit during which the Measurement occurred.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "visit_occurrence",
+            "reference_field": "visit_occurrence_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "visit_detail_id",
+          "type": "integer",
+          "description": "The VISIT_DETAIL record during which the Measurement occurred. For example, if the Person was in the ICU at the time the VISIT_OCCURRENCE record would reflect the overall hospital stay and the VISIT_DETAIL record would reflect the ICU stay during the hospital visit.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "visit_detail",
+            "reference_field": "visit_detail_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "measurement_source_value",
+          "type": "varchar(50)",
+          "description": "This field contains the exact value from the source data that represents the measurement that occurred.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "measurement_source_concept_id",
+          "type": "integer",
+          "description": "This is the concept representing the MEASUREMENT_SOURCE_VALUE and may not necessarily be standard. This field is discouraged from use in analysis because it is not required to contain Standard Concepts that are used across the OHDSI community, and should only be used when Standard Concepts do not adequately represent the source detail for the Measurement necessary for a given analytic use case. Consider using MEASUREMENT_CONCEPT_ID instead to enable standardized analytics that can be consistent across the network.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "unit_source_value",
+          "type": "varchar(50)",
+          "description": "This field contains the exact value from the source data that represents the unit of measurement used.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "value_source_value",
+          "type": "varchar(50)",
+          "description": "This field houses the verbatim result value of the Measurement from the source data .",
+          "nullable": "Yes"
+        }
+      ]
+    }
+  },
+  "observation": {
+    "schema": {
+      "table_name": "observation",
+      "table_description": "The OBSERVATION table captures clinical facts about a Person obtained in the context of examination, questioning or a procedure. Any data that cannot be represented by any other domains, such as social and lifestyle facts, medical history, family history, etc. are recorded here.",
+      "fields": [
+        {
+          "name": "observation_id",
+          "type": "integer",
+          "description": "The unique key given to an Observation record for a Person. Refer to the ETL for how duplicate Observations during the same Visit were handled.",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "person_id",
+          "type": "integer",
+          "description": "The PERSON_ID of the Person for whom the Observation is recorded. This may be a system generated code.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "person",
+            "reference_field": "person_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "observation_concept_id",
+          "type": "integer",
+          "description": "The OBSERVATION_CONCEPT_ID field is recommended for primary use in analyses, and must be used for network studies.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "observation_date",
+          "type": "date",
+          "description": "The date of when the Observation was obtained. Depending on what the Observation represents this could be the date of a lab test, the date of a survey, or the date a patient's family history was taken.",
+          "nullable": "No"
+        },
+        {
+          "name": "observation_datetime",
+          "type": "datetime",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "observation_type_concept_id",
+          "type": "integer",
+          "description": "This field can be used to determine the provenance of the Observation record, as in whether the measurement was from an EHR system, insurance claim, registry, or other sources.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Type Concept"
+          }
+        },
+        {
+          "name": "value_as_number",
+          "type": "float",
+          "description": "This is the numerical value of the Result of the Observation, if applicable and available. It is not expected that all Observations will have numeric results, rather, this field is here to house values should they exist.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "value_as_string",
+          "type": "varchar(60)",
+          "description": "This is the categorical value of the Result of the Observation, if applicable and available.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "value_as_concept_id",
+          "type": "integer",
+          "description": "It is possible that some records destined for the Observation table have two clinical ideas represented in one source code. This is common with ICD10 codes that describe a family history of some Condition, for example. In OMOP the Vocabulary breaks these two clinical ideas into two codes; one becomes the OBSERVATION_CONCEPT_ID and the other becomes the VALUE_AS_CONCEPT_ID. It is important when using the Observation table to keep this possibility in mind and to examine the VALUE_AS_CONCEPT_ID field for relevant information.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "qualifier_concept_id",
+          "type": "integer",
+          "description": "This field contains all attributes specifying the clinical fact further, such as as degrees, severities, drug-drug interaction alerts etc.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "unit_concept_id",
+          "type": "integer",
+          "description": "There is currently no recommended unit for individual observation concepts. UNIT_SOURCE_VALUES should be mapped to a Standard Concept in the Unit domain that best represents the unit as given in the source data.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Unit"
+          }
+        },
+        {
+          "name": "provider_id",
+          "type": "integer",
+          "description": "The provider associated with the observation record, e.g. the provider who ordered the test or the provider who recorded the result.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "provider",
+            "reference_field": "provider_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "visit_occurrence_id",
+          "type": "integer",
+          "description": "The visit during which the Observation occurred.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "visit_occurrence",
+            "reference_field": "visit_occurrence_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "visit_detail_id",
+          "type": "integer",
+          "description": "The VISIT_DETAIL record during which the Observation occurred. For example, if the Person was in the ICU at the time the VISIT_OCCURRENCE record would reflect the overall hospital stay and the VISIT_DETAIL record would reflect the ICU stay during the hospital visit.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "visit_detail",
+            "reference_field": "visit_detail_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "observation_source_value",
+          "type": "varchar(50)",
+          "description": "This field houses the verbatim value from the source data representing the Observation that occurred. For example, this could be an ICD10 or Read code.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "observation_source_concept_id",
+          "type": "integer",
+          "description": "This is the concept representing the OBSERVATION_SOURCE_VALUE and may not necessarily be standard. This field is discouraged from use in analysis because it is not required to contain Standard Concepts that are used across the OHDSI community, and should only be used when Standard Concepts do not adequately represent the source detail for the Observation necessary for a given analytic use case. Consider using OBSERVATION_CONCEPT_ID instead to enable standardized analytics that can be consistent across the network.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "unit_source_value",
+          "type": "varchar(50)",
+          "description": "This field houses the verbatim value from the source data representing the unit of the Observation that occurred.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "qualifier_source_value",
+          "type": "varchar(50)",
+          "description": "This field houses the verbatim value from the source data representing the qualifier of the Observation that occurred.",
+          "nullable": "Yes"
+        }
+      ]
+    }
+  },
+  "death": {
+    "schema": {
+      "table_name": "death",
+      "table_description": "The death domain contains the clinical event for how and when a Person dies. A person can have up to one record if the source system contains evidence about the Death, such as: Condition in an administrative claim, status of enrollment into a health plan, or explicit record in EHR data.",
+      "fields": [
+        {
+          "name": "person_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "person",
+            "reference_field": "person_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "death_date",
+          "type": "date",
+          "description": "The date the person was deceased.",
+          "nullable": "No"
+        },
+        {
+          "name": "death_datetime",
+          "type": "datetime",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "death_type_concept_id",
+          "type": "integer",
+          "description": "This is the provenance of the death record, i.e., where it came from. It is possible that an administrative claims database would source death information from a government file so do not assume the Death Type is the same as the Visit Type, etc.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Type Concept"
+          }
+        },
+        {
+          "name": "cause_concept_id",
+          "type": "integer",
+          "description": "This is the Standard Concept representing the Person's cause of death, if available.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "cause_source_value",
+          "type": "varchar(50)",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "cause_source_concept_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        }
+      ]
+    }
+  },
+  "note": {
+    "schema": {
+      "table_name": "note",
+      "table_description": "The NOTE table captures unstructured information that was recorded by a provider about a patient in free text (in ASCII, or preferably in UTF8 format) notes on a given date. The type of note_text is CLOB or varchar(MAX) depending on RDBMS.",
+      "fields": [
+        {
+          "name": "note_id",
+          "type": "integer",
+          "description": "A unique identifier for each note.",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "person_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "person",
+            "reference_field": "person_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "note_date",
+          "type": "date",
+          "description": "The date the note was recorded.",
+          "nullable": "No"
+        },
+        {
+          "name": "note_datetime",
+          "type": "datetime",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "note_type_concept_id",
+          "type": "integer",
+          "description": "The provenance of the note. Most likely this will be EHR.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Type Concept"
+          }
+        },
+        {
+          "name": "note_class_concept_id",
+          "type": "integer",
+          "description": "A Standard Concept Id representing the HL7 LOINC\r\nDocument Type Vocabulary classification of the note.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "note_title",
+          "type": "varchar(250)",
+          "description": "The title of the note.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "note_text",
+          "type": "varchar(max)",
+          "description": "The content of the note.",
+          "nullable": "No"
+        },
+        {
+          "name": "encoding_concept_id",
+          "type": "integer",
+          "description": "This is the Concept representing the character encoding type.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "language_concept_id",
+          "type": "integer",
+          "description": "The language of the note.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "provider_id",
+          "type": "integer",
+          "description": "The Provider who wrote the note.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "provider",
+            "reference_field": "provider_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "visit_occurrence_id",
+          "type": "integer",
+          "description": "The Visit during which the note was written.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "visit_occurrence",
+            "reference_field": "visit_occurrence_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "visit_detail_id",
+          "type": "integer",
+          "description": "The Visit Detail during which the note was written.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "visit_detail",
+            "reference_field": "visit_detail_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "note_source_value",
+          "type": "varchar(50)",
+          "description": "NA",
+          "nullable": "Yes"
+        }
+      ]
+    }
+  },
+  "note_nlp": {
+    "schema": {
+      "table_name": "note_nlp",
+      "table_description": "The NOTE_NLP table encodes all output of NLP on clinical notes. Each row represents a single extracted term from a note.",
+      "fields": [
+        {
+          "name": "note_nlp_id",
+          "type": "integer",
+          "description": "A unique identifier for the NLP record.",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "note_id",
+          "type": "integer",
+          "description": "This is the NOTE_ID for the NOTE record the NLP record is associated to.",
+          "nullable": "No"
+        },
+        {
+          "name": "section_concept_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "snippet",
+          "type": "varchar(250)",
+          "description": "A small window of text surrounding the term",
+          "nullable": "Yes"
+        },
+        {
+          "name": "offset",
+          "type": "varchar(50)",
+          "description": "Character offset of the extracted term in the input note",
+          "nullable": "Yes"
+        },
+        {
+          "name": "lexical_variant",
+          "type": "varchar(250)",
+          "description": "Raw text extracted from the NLP tool.",
+          "nullable": "No"
+        },
+        {
+          "name": "note_nlp_concept_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "note_nlp_source_concept_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "nlp_system",
+          "type": "varchar(250)",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "nlp_date",
+          "type": "date",
+          "description": "The date of the note processing.",
+          "nullable": "No"
+        },
+        {
+          "name": "nlp_datetime",
+          "type": "datetime",
+          "description": "The date and time of the note processing.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "term_exists",
+          "type": "varchar(1)",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "term_temporal",
+          "type": "varchar(50)",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "term_modifiers",
+          "type": "varchar(2000)",
+          "description": "NA",
+          "nullable": "Yes"
+        }
+      ]
+    }
+  },
+  "specimen": {
+    "schema": {
+      "table_name": "specimen",
+      "table_description": "The specimen domain contains the records identifying biological samples from a person.",
+      "fields": [
+        {
+          "name": "specimen_id",
+          "type": "integer",
+          "description": "Unique identifier for each specimen.",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "person_id",
+          "type": "integer",
+          "description": "The person from whom the specimen is collected.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "person",
+            "reference_field": "person_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "specimen_concept_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "specimen_type_concept_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Type Concept"
+          }
+        },
+        {
+          "name": "specimen_date",
+          "type": "date",
+          "description": "The date the specimen was collected.",
+          "nullable": "No"
+        },
+        {
+          "name": "specimen_datetime",
+          "type": "datetime",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "quantity",
+          "type": "float",
+          "description": "The amount of specimen collected from the person.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "unit_concept_id",
+          "type": "integer",
+          "description": "The unit for the quantity of the specimen.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "anatomic_site_concept_id",
+          "type": "integer",
+          "description": "This is the site on the body where the specimen is from.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "disease_status_concept_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "specimen_source_id",
+          "type": "varchar(50)",
+          "description": "This is the identifier for the specimen from the source system.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "specimen_source_value",
+          "type": "varchar(50)",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "unit_source_value",
+          "type": "varchar(50)",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "anatomic_site_source_value",
+          "type": "varchar(50)",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "disease_status_source_value",
+          "type": "varchar(50)",
+          "description": "NA",
+          "nullable": "Yes"
+        }
+      ]
+    }
+  },
+  "fact_relationship": {
+    "schema": {
+      "table_name": "fact_relationship",
+      "table_description": "The FACT_RELATIONSHIP table contains records about the relationships between facts stored as records in any table of the CDM. Relationships can be defined between facts from the same domain, or different domains. Examples of Fact Relationships include: [Person relationships](https://athena.ohdsi.org/search-terms/terms?domain=Relationship&standardConcept=Standard&page=2&pageSize=15&query=) (parent-child), care site relationships (hierarchical organizational structure of facilities within a health system), indication relationship (between drug exposures and associated conditions), usage relationships (of devices during the course of an associated procedure), or facts derived from one another (measurements derived from an associated specimen).",
+      "fields": [
+        {
+          "name": "domain_concept_id_1",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "fact_id_1",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No"
+        },
+        {
+          "name": "domain_concept_id_2",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "fact_id_2",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No"
+        },
+        {
+          "name": "relationship_concept_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        }
+      ]
+    }
+  },
+  "location": {
+    "schema": {
+      "table_name": "location",
+      "table_description": "The LOCATION table represents a generic way to capture physical location or address information of Persons and Care Sites.",
+      "fields": [
+        {
+          "name": "location_id",
+          "type": "integer",
+          "description": "The unique key given to a unique Location.",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "address_1",
+          "type": "varchar(50)",
+          "description": "This is the first line of the address.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "address_2",
+          "type": "varchar(50)",
+          "description": "This is the second line of the address",
+          "nullable": "Yes"
+        },
+        {
+          "name": "city",
+          "type": "varchar(50)",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "state",
+          "type": "varchar(2)",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "zip",
+          "type": "varchar(9)",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "county",
+          "type": "varchar(20)",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "location_source_value",
+          "type": "varchar(50)",
+          "description": "NA",
+          "nullable": "Yes"
+        }
+      ]
+    }
+  },
+  "care_site": {
+    "schema": {
+      "table_name": "care_site",
+      "table_description": "The CARE_SITE table contains a list of uniquely identified institutional (physical or organizational) units where healthcare delivery is practiced (offices, wards, hospitals, clinics, etc.).",
+      "fields": [
+        {
+          "name": "care_site_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "care_site_name",
+          "type": "varchar(255)",
+          "description": "The name of the care_site as it appears in the source data",
+          "nullable": "Yes"
+        },
+        {
+          "name": "place_of_service_concept_id",
+          "type": "integer",
+          "description": "This is a high-level way of characterizing a Care Site. Typically, however, Care Sites can provide care in multiple settings (inpatient, outpatient, etc.) and this granularity should be reflected in the visit.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "location_id",
+          "type": "integer",
+          "description": "The location_id from the LOCATION table representing the physical location of the care_site.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "location",
+            "reference_field": "location_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "care_site_source_value",
+          "type": "varchar(50)",
+          "description": "The identifier of the care_site as it appears in the source data. This could be an identifier separate from the name of the care_site.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "place_of_service_source_value",
+          "type": "varchar(50)",
+          "description": "NA",
+          "nullable": "Yes"
+        }
+      ]
+    }
+  },
+  "provider": {
+    "schema": {
+      "table_name": "provider",
+      "table_description": "The PROVIDER table contains a list of uniquely identified healthcare providers; duplication is not allowed. These are individuals providing hands-on healthcare to patients, such as physicians, nurses, midwives, physical therapists etc.",
+      "fields": [
+        {
+          "name": "provider_id",
+          "type": "integer",
+          "description": "It is assumed that every provider with a different unique identifier is in fact a different person and should be treated independently.",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "provider_name",
+          "type": "varchar(255)",
+          "description": "This field contains information that describes a healthcare provider.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "npi",
+          "type": "varchar(20)",
+          "description": "This is the National Provider Number issued to health care providers in the US by the Centers for Medicare and Medicaid Services (CMS).",
+          "nullable": "Yes"
+        },
+        {
+          "name": "dea",
+          "type": "varchar(20)",
+          "description": "This is the identifier issued by the DEA, a US federal agency, that allows a provider to write prescriptions for controlled substances.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "specialty_concept_id",
+          "type": "integer",
+          "description": "This field either represents the most common specialty that occurs in the data or the most specific concept that represents all specialties listed, should the provider have more than one. This includes physician specialties such as internal medicine, emergency medicine, etc. and allied health professionals such as nurses, midwives, and pharmacists.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "care_site_id",
+          "type": "integer",
+          "description": "This is the CARE_SITE_ID for the location that the provider primarily practices in.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "care_site",
+            "reference_field": "care_site_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "year_of_birth",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "gender_concept_id",
+          "type": "integer",
+          "description": "This field represents the recorded gender of the provider in the source data.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Gender"
+          }
+        },
+        {
+          "name": "provider_source_value",
+          "type": "varchar(50)",
+          "description": "Use this field to link back to providers in the source data. This is typically used for error checking of ETL logic.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "specialty_source_value",
+          "type": "varchar(50)",
+          "description": "This refers to the specific type of healthcare provider or field of expertise listed in the source data, encompassing physician specialties like internal medicine, emergency medicine, etc., as well as allied health professionals such as nurses, midwives, and pharmacists. It covers medical specialties like surgery, internal medicine, and radiology, while other services like prosthetics, acupuncture, and physical therapy fall under the domain of \\Service.\\",
+          "nullable": "Yes"
+        },
+        {
+          "name": "specialty_source_concept_id",
+          "type": "integer",
+          "description": "This is often zero as many sites use proprietary codes to store physician speciality.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "gender_source_value",
+          "type": "varchar(50)",
+          "description": "This is provider's gender as it appears in the source data.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "gender_source_concept_id",
+          "type": "integer",
+          "description": "This is often zero as many sites use proprietary codes to store provider gender.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        }
+      ]
+    }
+  },
+  "payer_plan_period": {
+    "schema": {
+      "table_name": "payer_plan_period",
+      "table_description": "The PAYER_PLAN_PERIOD table captures details of the period of time that a Person is continuously enrolled under a specific health Plan benefit structure from a given Payer. Each Person receiving healthcare is typically covered by a health benefit plan, which pays for (fully or partially), or directly provides, the care. These benefit plans are provided by payers, such as health insurances or state or government agencies. In each plan the details of the health benefits are defined for the Person or her family, and the health benefit Plan might change over time typically with increasing utilization (reaching certain cost thresholds such as deductibles), plan availability and purchasing choices of the Person. The unique combinations of Payer organizations, health benefit Plans and time periods in which they are valid for a Person are recorded in this table.",
+      "fields": [
+        {
+          "name": "payer_plan_period_id",
+          "type": "integer",
+          "description": "A unique identifier for each unique combination of a Person, Payer, Plan, and Period of time.",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "person_id",
+          "type": "integer",
+          "description": "The Person covered by the Plan.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "person",
+            "reference_field": "person_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "payer_plan_period_start_date",
+          "type": "date",
+          "description": "Start date of Plan coverage.",
+          "nullable": "No"
+        },
+        {
+          "name": "payer_plan_period_end_date",
+          "type": "date",
+          "description": "End date of Plan coverage.",
+          "nullable": "No"
+        },
+        {
+          "name": "payer_concept_id",
+          "type": "integer",
+          "description": "This field represents the organization who reimburses the provider which administers care to the Person.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "payer_source_value",
+          "type": "varchar(50)",
+          "description": "This is the Payer as it appears in the source data.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "payer_source_concept_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "plan_concept_id",
+          "type": "integer",
+          "description": "This field represents the specific health benefit Plan the Person is enrolled in.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "plan_source_value",
+          "type": "varchar(50)",
+          "description": "This is the health benefit Plan of the Person as it appears in the source data.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "plan_source_concept_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "sponsor_concept_id",
+          "type": "integer",
+          "description": "This field represents the sponsor of the Plan who finances the Plan. This includes self-insured, small group health plan and large group health plan.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "sponsor_source_value",
+          "type": "varchar(50)",
+          "description": "The Plan sponsor as it appears in the source data.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "sponsor_source_concept_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "family_source_value",
+          "type": "varchar(50)",
+          "description": "The common identifier for all people (often a family) that covered by the same policy.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "stop_reason_concept_id",
+          "type": "integer",
+          "description": "This field represents the reason the Person left the Plan, if known.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "stop_reason_source_value",
+          "type": "varchar(50)",
+          "description": "The Plan stop reason as it appears in the source data.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "stop_reason_source_concept_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        }
+      ]
+    }
+  },
+  "cost": {
+    "schema": {
+      "table_name": "cost",
+      "table_description": "The COST table captures records containing the cost of any medical event recorded in one of the OMOP clinical event tables such as DRUG_EXPOSURE, PROCEDURE_OCCURRENCE, VISIT_OCCURRENCE, VISIT_DETAIL, DEVICE_OCCURRENCE, OBSERVATION or MEASUREMENT.\r\n\r\nEach record in the cost table account for the amount of money transacted for the clinical event. So, the COST table may be used to represent both receivables (charges) and payments (paid), each transaction type represented by its COST_CONCEPT_ID. The COST_TYPE_CONCEPT_ID field will use concepts in the Standardized Vocabularies to designate the source (provenance) of the cost data. A reference to the health plan information in the PAYER_PLAN_PERIOD table is stored in the record for information used for the adjudication system to determine the persons benefit for the clinical event.",
+      "fields": [
+        {
+          "name": "cost_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "cost_event_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No"
+        },
+        {
+          "name": "cost_domain_id",
+          "type": "varchar(20)",
+          "description": "NA",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "domain",
+            "reference_field": "domain_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "cost_type_concept_id",
+          "type": "integer",
+          "description": "The concept referenced in this field defines the source of the cost information, and therefore the perspective. It could be from the perspective of the payer, or the perspective of the provider. Therefore, cost really means either cost or revenue, and the direction of funds (incoming and outgoing) as well as the modus of its calculation is defined by this field.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "currency_concept_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "total_charge",
+          "type": "float",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "total_cost",
+          "type": "float",
+          "description": "The cost of the goods or services the provider provides is often not known directly, but derived from the hospital charges multiplied by an average cost-to-charge ratio. This data is currently available for NIS datasets, or any other HCUP datasets.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "total_paid",
+          "type": "float",
+          "description": "This field is calculated using the following formula: paid_by_payer + paid_by_patient + paid_by_primary. In claims data, this field is considered the calculated field the payer expects the provider to get reimbursed for goods and services, based on the payer's contractual obligations.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "paid_by_payer",
+          "type": "float",
+          "description": "In claims data, generally there is one field representing the total payment from the payer for the service/device/drug. However, this field could be a calculated field if the source data provides separate payment information for the ingredient cost and the dispensing fee in case of prescription benefits. If there is more than one Payer in the source data, several cost records indicate that fact. The Payer reporting this reimbursement should be indicated under the payer_plan_id field.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "paid_by_patient",
+          "type": "float",
+          "description": "This field is most often used in claims data to report the contracted amount the patient is responsible for reimbursing the provider for the goods and services she received. This is a calculated field using the following formula: paid_patient_copay + paid_patient_coinsurance + paid_patient_deductible.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "paid_patient_copay",
+          "type": "float",
+          "description": "The paid_patient_copay field is only used for reporting a patient's copay amount reported on an insurance claim. This field contributes to the paid_by_patient variable.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "paid_patient_coinsurance",
+          "type": "float",
+          "description": "The paid_patient_coinsurance field is only used for reporting a patient's coinsurance amount reported on an insurance claim. This field contributes to the paid_by_patient variable.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "paid_patient_deductible",
+          "type": "float",
+          "description": "The paid_patient_deductible field is only used for reporting a patient's deductible amount reported on an insurance claim. This field contributes to the paid_by_patient variable.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "paid_by_primary",
+          "type": "float",
+          "description": "The paid_by_primary field is only used for reporting a patient's primary insurance payment amount reported on the secondary payer insurance claim. If the source data has actual primary insurance payments, then the primary insurance payment should have its own cost record with a payer_plan_id set to the applicable payer.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "paid_ingredient_cost",
+          "type": "float",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "paid_dispensing_fee",
+          "type": "float",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "payer_plan_period_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "amount_allowed",
+          "type": "float",
+          "description": "This information is generally available in claims data. This is similar to the total_paid amount in that it shows what the payer expects the provider to be reimbursed after the payer and patient pay. This differs from the total_paid amount in that it is not a calculated field, but a field available directly in claims data. The field is payer-specific and the payer should be indicated by the payer_plan_id field.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "revenue_code_concept_id",
+          "type": "integer",
+          "description": "Revenue codes are a method to charge for a class of procedures and conditions in the U.S. hospital system.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "revenue_code_source_value",
+          "type": "varchar(50)",
+          "description": "Revenue codes are a method to charge for a class of procedures and conditions in the U.S. hospital system.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "drg_concept_id",
+          "type": "integer",
+          "description": "DRG is a system to classify hospital cases into one of approximately 500 groups for reimbursement purposes. They have been used in the United States since 1983.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "drg_source_value",
+          "type": "varchar(3)",
+          "description": "Diagnosis Related Groups are US codes used to classify hospital cases into one of approximately 500 groups.",
+          "nullable": "Yes"
+        }
+      ]
+    }
+  },
+  "drug_era": {
+    "schema": {
+      "table_name": "drug_era",
+      "table_description": "A Drug Era is defined as a span of time when the Person is assumed to be exposed to a particular active ingredient. A Drug Era is not the same as a Drug Exposure: Exposures are individual records corresponding to the source when Drug was delivered to the Person, while successive periods of Drug Exposures are combined under certain rules to produce continuous Drug Eras. Every record in the DRUG_EXPOSURE table should be part of a drug era based on the dates of exposure.",
+      "fields": [
+        {
+          "name": "drug_era_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "person_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "person",
+            "reference_field": "person_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "drug_concept_id",
+          "type": "integer",
+          "description": "The drug_concept_id should conform to the concept class 'ingredient' as the drug_era is an era of time where a person is exposed to a particular drug ingredient.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Drug"
+          }
+        },
+        {
+          "name": "drug_era_start_date",
+          "type": "date",
+          "description": "NA",
+          "nullable": "No"
+        },
+        {
+          "name": "drug_era_end_date",
+          "type": "date",
+          "description": "NA",
+          "nullable": "No"
+        },
+        {
+          "name": "drug_exposure_count",
+          "type": "integer",
+          "description": "The count of grouped DRUG_EXPOSURE records that were included in the DRUG_ERA row",
+          "nullable": "Yes"
+        },
+        {
+          "name": "gap_days",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "Yes"
+        }
+      ]
+    }
+  },
+  "dose_era": {
+    "schema": {
+      "table_name": "dose_era",
+      "table_description": "A Dose Era is defined as a span of time when the Person is assumed to be exposed to a constant dose of a specific active ingredient.",
+      "fields": [
+        {
+          "name": "dose_era_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "person_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "person",
+            "reference_field": "person_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "drug_concept_id",
+          "type": "integer",
+          "description": "The Concept Id representing the specific drug ingredient.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Drug"
+          }
+        },
+        {
+          "name": "unit_concept_id",
+          "type": "integer",
+          "description": "The Concept Id representing the unit of the specific drug ingredient.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Unit"
+          }
+        },
+        {
+          "name": "dose_value",
+          "type": "float",
+          "description": "The numeric value of the dosage of the drug_ingredient.",
+          "nullable": "No"
+        },
+        {
+          "name": "dose_era_start_date",
+          "type": "date",
+          "description": "The date the Person started on the specific dosage, with at least 31 days since any prior exposure.",
+          "nullable": "No"
+        },
+        {
+          "name": "dose_era_end_date",
+          "type": "date",
+          "description": "NA",
+          "nullable": "No"
+        }
+      ]
+    }
+  },
+  "condition_era": {
+    "schema": {
+      "table_name": "condition_era",
+      "table_description": "A Condition Era is defined as a span of time when the Person is assumed to have a given condition. Similar to Drug Eras, Condition Eras are chronological periods of Condition Occurrence and every Condition Occurrence record should be part of a Condition Era. Combining individual Condition Occurrences into a single Condition Era serves two purposes:\r\n\r\n- It allows aggregation of chronic conditions that require frequent ongoing care, instead of treating each Condition Occurrence as an independent event.\r\n- It allows aggregation of multiple, closely timed doctor visits for the same Condition to avoid double-counting the Condition Occurrences.\r\nFor example, consider a Person who visits her Primary Care Physician (PCP) and who is referred to a specialist. At a later time, the Person visits the specialist, who confirms the PCP's original diagnosis and provides the appropriate treatment to resolve the condition. These two independent doctor visits should be aggregated into one Condition Era.",
+      "fields": [
+        {
+          "name": "condition_era_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "person_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "person",
+            "reference_field": "person_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "condition_concept_id",
+          "type": "integer",
+          "description": "The Concept Id representing the Condition.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = Condition"
+          }
+        },
+        {
+          "name": "condition_era_start_date",
+          "type": "date",
+          "description": "The start date for the Condition Era\r\nconstructed from the individual\r\ninstances of Condition Occurrences.\r\nIt is the start date of the very first\r\nchronologically recorded instance of\r\nthe condition with at least 31 days since any prior record of the same Condition.",
+          "nullable": "No"
+        },
+        {
+          "name": "condition_era_end_date",
+          "type": "date",
+          "description": "The end date for the Condition Era\r\nconstructed from the individual\r\ninstances of Condition Occurrences.\r\nIt is the end date of the final\r\ncontinuously recorded instance of the\r\nCondition.",
+          "nullable": "No"
+        },
+        {
+          "name": "condition_occurrence_count",
+          "type": "integer",
+          "description": "The number of individual Condition\r\nOccurrences used to construct the\r\ncondition era.",
+          "nullable": "Yes"
+        }
+      ]
+    }
+  },
+  "metadata": {
+    "schema": {
+      "table_name": "metadata",
+      "table_description": "The METADATA table contains metadata information about a dataset that has been transformed to the OMOP Common Data Model.",
+      "fields": [
+        {
+          "name": "metadata_concept_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "metadata_type_concept_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "name",
+          "type": "varchar(250)",
+          "description": "NA",
+          "nullable": "No"
+        },
+        {
+          "name": "value_as_string",
+          "type": "varchar(250)",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "value_as_concept_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "metadata_date",
+          "type": "date",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "metadata_datetime",
+          "type": "datetime",
+          "description": "NA",
+          "nullable": "Yes"
+        }
+      ]
+    }
+  },
+  "cdm_source": {
+    "schema": {
+      "table_name": "cdm_source",
+      "table_description": "The CDM_SOURCE table contains detail about the source database and the process used to transform the data into the OMOP Common Data Model.",
+      "fields": [
+        {
+          "name": "cdm_source_name",
+          "type": "varchar(255)",
+          "description": "The name of the CDM instance.",
+          "nullable": "No"
+        },
+        {
+          "name": "cdm_source_abbreviation",
+          "type": "varchar(25)",
+          "description": "The abbreviation of the CDM instance.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "cdm_holder",
+          "type": "varchar(255)",
+          "description": "The holder of the CDM instance.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "source_description",
+          "type": "varchar(max)",
+          "description": "The description of the CDM instance.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "source_documentation_reference",
+          "type": "varchar(255)",
+          "description": "Refers to a publication or web resource describing the source data, e.g. a data dictionary.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "cdm_etl_reference",
+          "type": "varchar(255)",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "source_release_date",
+          "type": "date",
+          "description": "The date the data was extracted from the source system. In some systems that is the same as the date the ETL was run. Typically the latest even date in the source is on the source_release_date.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "cdm_release_date",
+          "type": "date",
+          "description": "The date the ETL script was completed. Typically this is after the source_release_date.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "cdm_version",
+          "type": "varchar(10)",
+          "description": "Version of the OMOP CDM used as string. e.g. v5.4",
+          "nullable": "Yes"
+        },
+        {
+          "name": "vocabulary_version",
+          "type": "varchar(20)",
+          "description": "Version of the OMOP standardised vocabularies loaded",
+          "nullable": "Yes"
+        }
+      ]
+    }
+  },
+  "concept": {
+    "schema": {
+      "table_name": "concept",
+      "table_description": "The Standardized Vocabularies contains records, or Concepts, that uniquely identify each fundamental unit of meaning used to express clinical information in all domain tables of the CDM. Concepts are derived from vocabularies, which represent clinical information across a domain (e.g. conditions, drugs, procedures) through the use of codes and associated descriptions. Some Concepts are designated Standard Concepts, meaning these Concepts can be used as normative expressions of a clinical entity within the OMOP Common Data Model and standardized analytics. Each Standard Concept belongs to one Domain, which defines the location where the Concept would be expected to occur within the data tables of the CDM. Concepts can represent broad categories ('Cardiovascular disease'), detailed clinical elements ('Myocardial infarction of the anterolateral wall'), or modifying characteristics and attributes that define Concepts at various levels of detail (severity of a disease, associated morphology, etc.). Records in the Standardized Vocabularies tables are derived from national or international vocabularies such as SNOMED-CT, RxNorm, and LOINC, or custom OMOP Concepts defined to cover various aspects of observational data analysis.",
+      "fields": [
+        {
+          "name": "concept_id",
+          "type": "integer",
+          "description": "A unique identifier for each Concept across all domains.",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "concept_name",
+          "type": "varchar(255)",
+          "description": "An unambiguous, meaningful and descriptive name for the Concept.",
+          "nullable": "No"
+        },
+        {
+          "name": "domain_id",
+          "type": "varchar(20)",
+          "description": "A foreign key to the [DOMAIN](https://ohdsi.github.io/CommonDataModel/cdm53.html#domain) table the Concept belongs to.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "domain",
+            "reference_field": "domain_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "vocabulary_id",
+          "type": "varchar(20)",
+          "description": "A foreign key to the [VOCABULARY](https://ohdsi.github.io/CommonDataModel/cdm53.html#vocabulary)\r\ntable indicating from which source the\r\nConcept has been adapted.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "vocabulary",
+            "reference_field": "vocabulary_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "concept_class_id",
+          "type": "varchar(20)",
+          "description": "The attribute or concept class of the\r\nConcept. Examples are 'Clinical Drug',\r\n'Ingredient', 'Clinical Finding' etc.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept_class",
+            "reference_field": "concept_class_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "standard_concept",
+          "type": "varchar(1)",
+          "description": "This flag determines where a Concept is\r\na Standard Concept, i.e. is used in the\r\ndata, a Classification Concept, or a\r\nnon-standard Source Concept. The\r\nallowable values are 'S' (Standard\r\nConcept) and 'C' (Classification\r\nConcept), otherwise the content is NULL.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "concept_code",
+          "type": "varchar(50)",
+          "description": "The concept code represents the identifier\r\nof the Concept in the source vocabulary,\r\nsuch as SNOMED-CT concept IDs,\r\nRxNorm RXCUIs etc. Note that concept\r\ncodes are not unique across vocabularies.",
+          "nullable": "No"
+        },
+        {
+          "name": "valid_start_date",
+          "type": "date",
+          "description": "The date when the Concept was first\r\nrecorded. The default value is\r\n1-Jan-1970, meaning, the Concept has no\r\n(known) date of inception.",
+          "nullable": "No"
+        },
+        {
+          "name": "valid_end_date",
+          "type": "date",
+          "description": "The date when the Concept became\r\ninvalid because it was deleted or\r\nsuperseded (updated) by a new concept.\r\nThe default value is 31-Dec-2099,\r\nmeaning, the Concept is valid until it\r\nbecomes deprecated.",
+          "nullable": "No"
+        },
+        {
+          "name": "invalid_reason",
+          "type": "varchar(1)",
+          "description": "Reason the Concept was invalidated.\r\nPossible values are D (deleted), U\r\n(replaced with an update) or NULL when\r\nvalid_end_date has the default value.",
+          "nullable": "Yes"
+        }
+      ]
+    }
+  },
+  "vocabulary": {
+    "schema": {
+      "table_name": "vocabulary",
+      "table_description": "The VOCABULARY table includes a list of the Vocabularies integrated from various sources or created de novo in OMOP CDM. This reference table contains a single record for each Vocabulary and includes a descriptive name and other associated attributes for the Vocabulary.",
+      "fields": [
+        {
+          "name": "vocabulary_id",
+          "type": "varchar(20)",
+          "description": "A unique identifier for each Vocabulary, such\r\nas ICD9CM, SNOMED, Visit.",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "vocabulary_name",
+          "type": "varchar(255)",
+          "description": "The name describing the vocabulary, for\r\nexample, International Classification of\r\nDiseases, Ninth Revision, Clinical\r\nModification, Volume 1 and 2 (NCHS) etc.",
+          "nullable": "No"
+        },
+        {
+          "name": "vocabulary_reference",
+          "type": "varchar(255)",
+          "description": "External reference to documentation or\r\navailable download of the about the\r\nvocabulary.",
+          "nullable": "No"
+        },
+        {
+          "name": "vocabulary_version",
+          "type": "varchar(255)",
+          "description": "Version of the Vocabulary as indicated in\r\nthe source.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "vocabulary_concept_id",
+          "type": "integer",
+          "description": "A Concept that represents the Vocabulary the VOCABULARY record belongs to.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        }
+      ]
+    }
+  },
+  "domain": {
+    "schema": {
+      "table_name": "domain",
+      "table_description": "The DOMAIN table includes a list of OMOP-defined Domains to which the Concepts of the Standardized Vocabularies can belong. A Domain represents a clinical definition whereby we assign matching Concepts for the standardized fields in the CDM tables. For example, the Condition Domain contains Concepts that describe a patient condition, and these Concepts can only be used in the condition_concept_id field of the CONDITION_OCCURRENCE and CONDITION_ERA tables. This reference table is populated with a single record for each Domain, including a Domain ID and a descriptive name for every Domain.",
+      "fields": [
+        {
+          "name": "domain_id",
+          "type": "varchar(20)",
+          "description": "A unique key for each domain.",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "domain_name",
+          "type": "varchar(255)",
+          "description": "The name describing the Domain, e.g.\r\nCondition, Procedure, Measurement\r\netc.",
+          "nullable": "No"
+        },
+        {
+          "name": "domain_concept_id",
+          "type": "integer",
+          "description": "A Concept representing the Domain Concept the DOMAIN record belongs to.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        }
+      ]
+    }
+  },
+  "concept_class": {
+    "schema": {
+      "table_name": "concept_class",
+      "table_description": "The CONCEPT_CLASS table includes semantic categories that reference the source structure of each Vocabulary. Concept Classes represent so-called horizontal (e.g. MedDRA, RxNorm) or vertical levels (e.g. SNOMED) of the vocabulary structure. Vocabularies without any Concept Classes, such as HCPCS, use the vocabulary_id as the Concept Class. This reference table is populated with a single record for each Concept Class, which includes a Concept Class ID and a fully specified Concept Class name.",
+      "fields": [
+        {
+          "name": "concept_class_id",
+          "type": "varchar(20)",
+          "description": "A unique key for each class.",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "concept_class_name",
+          "type": "varchar(255)",
+          "description": "The name describing the Concept Class, e.g.\r\nClinical Finding, Ingredient, etc.",
+          "nullable": "No"
+        },
+        {
+          "name": "concept_class_concept_id",
+          "type": "integer",
+          "description": "A Concept that represents the Concept Class.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        }
+      ]
+    }
+  },
+  "concept_relationship": {
+    "schema": {
+      "table_name": "concept_relationship",
+      "table_description": "The CONCEPT_RELATIONSHIP table contains records that define relationships between any two Concepts and the nature or type of the relationship. This table captures various types of relationships, including hierarchical, associative, and other semantic connections, enabling comprehensive analysis and interpretation of clinical concepts. Every kind of relationship is defined in the RELATIONSHIP table.",
+      "fields": [
+        {
+          "name": "concept_id_1",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "concept_id_2",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "relationship_id",
+          "type": "varchar(20)",
+          "description": "The relationship between CONCEPT_ID_1 and CONCEPT_ID_2. Please see the [Vocabulary Conventions](https://ohdsi.github.io/CommonDataModel/dataModelConventions.html#concept_relationships). for more information.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "relationship",
+            "reference_field": "relationship_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "valid_start_date",
+          "type": "date",
+          "description": "The date when the relationship is first recorded.",
+          "nullable": "No"
+        },
+        {
+          "name": "valid_end_date",
+          "type": "date",
+          "description": "The date when the relationship is invalidated.",
+          "nullable": "No"
+        },
+        {
+          "name": "invalid_reason",
+          "type": "varchar(1)",
+          "description": "Reason the relationship was invalidated. Possible values are 'D' (deleted), 'U' (updated) or NULL.",
+          "nullable": "Yes"
+        }
+      ]
+    }
+  },
+  "relationship": {
+    "schema": {
+      "table_name": "relationship",
+      "table_description": "The RELATIONSHIP table provides a reference list of all types of relationships that can be used to associate any two concepts in the CONCEPT_RELATIONSHP table.",
+      "fields": [
+        {
+          "name": "relationship_id",
+          "type": "varchar(20)",
+          "description": "The type of relationship captured by the\r\nrelationship record.",
+          "nullable": "No",
+          "primary_key": "Yes"
+        },
+        {
+          "name": "relationship_name",
+          "type": "varchar(255)",
+          "description": "NA",
+          "nullable": "No"
+        },
+        {
+          "name": "is_hierarchical",
+          "type": "varchar(1)",
+          "description": "Defines whether a relationship defines\r\nconcepts into classes or hierarchies. Values\r\nare 1 for hierarchical relationship or 0 if not.",
+          "nullable": "No"
+        },
+        {
+          "name": "defines_ancestry",
+          "type": "varchar(1)",
+          "description": "Defines whether a hierarchical relationship\r\ncontributes to the concept_ancestor table.\r\nThese are subsets of the hierarchical\r\nrelationships. Valid values are 1 or 0.",
+          "nullable": "No"
+        },
+        {
+          "name": "reverse_relationship_id",
+          "type": "varchar(20)",
+          "description": "The identifier for the relationship used to\r\ndefine the reverse relationship between two\r\nconcepts.",
+          "nullable": "No"
+        },
+        {
+          "name": "relationship_concept_id",
+          "type": "integer",
+          "description": "A foreign key that refers to an identifier in\r\nthe [CONCEPT](https://ohdsi.github.io/CommonDataModel/cdm53.html#concept) table for the unique\r\nrelationship concept.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        }
+      ]
+    }
+  },
+  "concept_synonym": {
+    "schema": {
+      "table_name": "concept_synonym",
+      "table_description": "The CONCEPT_SYNONYM table is used to store alternate names and descriptions for Concepts.",
+      "fields": [
+        {
+          "name": "concept_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "concept_synonym_name",
+          "type": "varchar(1000)",
+          "description": "NA",
+          "nullable": "No"
+        },
+        {
+          "name": "language_concept_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        }
+      ]
+    }
+  },
+  "concept_ancestor": {
+    "schema": {
+      "table_name": "concept_ancestor",
+      "table_description": "The CONCEPT_ANCESTOR table is designed to simplify observational analysis by providing the complete hierarchical relationships between Concepts. Only direct parent-child relationships between Concepts are stored in the CONCEPT_RELATIONSHIP table. To determine higher level ancestry connections, all individual direct relationships would have to be navigated at analysis time. The CONCEPT_ANCESTOR table includes records for all parent-child relationships, as well as grandparent-grandchild relationships and those of any other level of lineage. Using the CONCEPT_ANCESTOR table allows for querying for all descendants of a hierarchical concept. For example, drug ingredients and drug products are all descendants of a drug class ancestor.\r\n\r\nThis table is entirely derived from the CONCEPT, CONCEPT_RELATIONSHIP and RELATIONSHIP tables.",
+      "fields": [
+        {
+          "name": "ancestor_concept_id",
+          "type": "integer",
+          "description": "The Concept Id for the higher-level concept\r\nthat forms the ancestor in the relationship.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "descendant_concept_id",
+          "type": "integer",
+          "description": "The Concept Id for the lower-level concept\r\nthat forms the descendant in the\r\nrelationship.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "min_levels_of_separation",
+          "type": "integer",
+          "description": "The minimum separation in number of\r\nlevels of hierarchy between ancestor and\r\ndescendant concepts. This is an attribute\r\nthat is used to simplify hierarchic analysis.",
+          "nullable": "No"
+        },
+        {
+          "name": "max_levels_of_separation",
+          "type": "integer",
+          "description": "The maximum separation in number of\r\nlevels of hierarchy between ancestor and\r\ndescendant concepts. This is an attribute\r\nthat is used to simplify hierarchic analysis.",
+          "nullable": "No"
+        }
+      ]
+    }
+  },
+  "source_to_concept_map": {
+    "schema": {
+      "table_name": "source_to_concept_map",
+      "table_description": "The source to concept map table is a legacy data structure within the OMOP Common Data Model, recommended for use in ETL processes to maintain local source codes which are not available as Concepts in the Standardized Vocabularies, and to establish mappings for each source code into a Standard Concept as target_concept_ids that can be used to populate the Common Data Model tables. The SOURCE_TO_CONCEPT_MAP table is no longer populated with content within the Standardized Vocabularies published to the OMOP community.",
+      "fields": [
+        {
+          "name": "source_code",
+          "type": "varchar(50)",
+          "description": "The source code being translated\r\ninto a Standard Concept.",
+          "nullable": "No"
+        },
+        {
+          "name": "source_concept_id",
+          "type": "integer",
+          "description": "A foreign key to the Source\r\nConcept that is being translated\r\ninto a Standard Concept.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "source_vocabulary_id",
+          "type": "varchar(20)",
+          "description": "A foreign key to the\r\nVOCABULARY table defining the\r\nvocabulary of the source code that\r\nis being translated to a Standard\r\nConcept.",
+          "nullable": "No"
+        },
+        {
+          "name": "source_code_description",
+          "type": "varchar(255)",
+          "description": "An optional description for the\r\nsource code. This is included as a\r\nconvenience to compare the\r\ndescription of the source code to\r\nthe name of the concept.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "target_concept_id",
+          "type": "integer",
+          "description": "The target Concept\r\nto which the source code is being\r\nmapped.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "target_vocabulary_id",
+          "type": "varchar(20)",
+          "description": "The Vocabulary of the target Concept.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "vocabulary",
+            "reference_field": "vocabulary_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "valid_start_date",
+          "type": "date",
+          "description": "The date when the mapping\r\ninstance was first recorded.",
+          "nullable": "No"
+        },
+        {
+          "name": "valid_end_date",
+          "type": "date",
+          "description": "The date when the mapping\r\ninstance became invalid because it\r\nwas deleted or superseded\r\n(updated) by a new relationship.\r\nDefault value is 31-Dec-2099.",
+          "nullable": "No"
+        },
+        {
+          "name": "invalid_reason",
+          "type": "varchar(1)",
+          "description": "Reason the mapping instance was invalidated. Possible values are D (deleted), U (replaced with an update) or NULL when valid_end_date has the default value.",
+          "nullable": "Yes"
+        }
+      ]
+    }
+  },
+  "drug_strength": {
+    "schema": {
+      "table_name": "drug_strength",
+      "table_description": "The DRUG_STRENGTH table contains structured content about the amount or concentration and associated units of a specific ingredient contained within a particular drug product. This table is supplemental information to support standardized analysis of drug utilization.",
+      "fields": [
+        {
+          "name": "drug_concept_id",
+          "type": "integer",
+          "description": "The Concept representing the Branded Drug or Clinical Drug Product.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "ingredient_concept_id",
+          "type": "integer",
+          "description": "The Concept representing the active ingredient contained within the drug product.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "amount_value",
+          "type": "float",
+          "description": "The numeric value or the amount of active ingredient contained within the drug product.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "amount_unit_concept_id",
+          "type": "integer",
+          "description": "The Concept representing the Unit of measure for the amount of active ingredient contained within the drug product.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "numerator_value",
+          "type": "float",
+          "description": "The concentration of the active ingredient contained within the drug product.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "numerator_unit_concept_id",
+          "type": "integer",
+          "description": "The Concept representing the Unit of measure for the concentration of active ingredient.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "denominator_value",
+          "type": "float",
+          "description": "The amount of total liquid (or other divisible product, such as ointment, gel, spray, etc.).",
+          "nullable": "Yes"
+        },
+        {
+          "name": "denominator_unit_concept_id",
+          "type": "integer",
+          "description": "The Concept representing the denominator unit for the concentration of active ingredient.",
+          "nullable": "Yes",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "box_size",
+          "type": "integer",
+          "description": "The number of units of Clinical Branded Drug or Quantified Clinical or Branded Drug contained in a box as dispensed to the patient.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "valid_start_date",
+          "type": "date",
+          "description": "The date when the Concept was first\r\nrecorded. The default value is\r\n1-Jan-1970.",
+          "nullable": "No"
+        },
+        {
+          "name": "valid_end_date",
+          "type": "date",
+          "description": "The date when then Concept became invalid.",
+          "nullable": "No"
+        },
+        {
+          "name": "invalid_reason",
+          "type": "varchar(1)",
+          "description": "Reason the concept was invalidated. Possible values are D (deleted), U (replaced with an update) or NULL when valid_end_date has the default value.",
+          "nullable": "Yes"
+        }
+      ]
+    }
+  },
+  "cohort_definition": {
+    "schema": {
+      "table_name": "cohort_definition",
+      "table_description": "The COHORT_DEFINITION table contains records defining a Cohort derived from the data through the associated description and syntax and upon instantiation (execution of the algorithm) placed into the COHORT table. Cohorts are a set of subjects that satisfy a given combination of inclusion criteria for a duration of time. The COHORT_DEFINITION table provides a standardized structure for maintaining the rules governing the inclusion of a subject into a cohort, and can store operational programming code to instantiate the cohort within the OMOP Common Data Model.",
+      "fields": [
+        {
+          "name": "cohort_definition_id",
+          "type": "integer",
+          "description": "This is the identifier given to the cohort, usually by the ATLAS application",
+          "nullable": "No"
+        },
+        {
+          "name": "cohort_definition_name",
+          "type": "varchar(255)",
+          "description": "A short description of the cohort",
+          "nullable": "No"
+        },
+        {
+          "name": "cohort_definition_description",
+          "type": "varchar(max)",
+          "description": "A complete description of the cohort.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "definition_type_concept_id",
+          "type": "integer",
+          "description": "Type defining what kind of Cohort Definition the record represents and how the syntax may be executed.",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "cohort_definition_syntax",
+          "type": "varchar(max)",
+          "description": "Syntax or code to operationalize the Cohort Definition.",
+          "nullable": "Yes"
+        },
+        {
+          "name": "subject_concept_id",
+          "type": "integer",
+          "description": "This field contains a Concept that represents the domain of the subjects that are members of the cohort (e.g., Person, Provider, Visit).",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "cohort_initiation_date",
+          "type": "date",
+          "description": "A date to indicate when the Cohort was initiated in the COHORT table.",
+          "nullable": "Yes"
+        }
+      ]
+    }
+  },
+  "attribute_definition": {
+    "schema": {
+      "table_name": "attribute_definition",
+      "table_description": "The ATTRIBUTE_DEFINITION table contains records to define each attribute\r\nthrough an associated description and syntax. Attributes are derived elements\r\nthat can be selected or calculated for a subject within a cohort. The\r\nATTRIBUTE_DEFINITION table provides a standardized structure for\r\nmaintaining the rules governing the calculation of covariates for a subject in a\r\ncohort, and can store operational programming code to instantiate the\r\nattributes for a given cohort within the OMOP Common Data Model.",
+      "fields": [
+        {
+          "name": "attribute_definition_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No"
+        },
+        {
+          "name": "attribute_name",
+          "type": "varchar(255)",
+          "description": "NA",
+          "nullable": "No"
+        },
+        {
+          "name": "attribute_description",
+          "type": "varchar(max)",
+          "description": "NA",
+          "nullable": "Yes"
+        },
+        {
+          "name": "attribute_type_concept_id",
+          "type": "integer",
+          "description": "NA",
+          "nullable": "No",
+          "foreign_key": {
+            "reference_table": "concept",
+            "reference_field": "concept_id",
+            "domain_info": "[domain.domain_name] = NA"
+          }
+        },
+        {
+          "name": "attribute_syntax",
+          "type": "varchar(max)",
+          "description": "NA",
+          "nullable": "Yes"
+        }
+      ]
+    }
+  }
+}

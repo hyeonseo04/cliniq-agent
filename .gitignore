@@ -1,0 +1,32 @@
+# 비밀정보 — 절대 커밋 금지
+.env
+*.pem
+*.key
+
+# 가상환경·캐시
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# 대용량 데이터 (재생성 가능)
+data/dqd/csv/OMOP_CDMv5.3_Concept_Level.csv
+data/chroma/
+data/ddl/*.sql
+data/chroma/
+
+# 어휘 원본 (Athena 라이선스 — 각자 다운로드)
+data/vocab/
+**/CONCEPT.csv
+**/CONCEPT_*.csv
+
+# 실행 결과 (재현 가능)
+results/eval/*.json
+results/rules/*.json
+results/gold_sql/*.sql
+nohup.out
+*.log
+
+# DQD 원본 SQL 템플릿 (OHDSI 저장소에서 재다운로드 가능)
+data/dqd/sql/
